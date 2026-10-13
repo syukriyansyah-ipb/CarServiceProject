@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MitsubishiApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+19d0ee40e5468954580666c575fc9bb133a983fd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45933e885212a76a09a310b843024e670287ab2c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MitsubishiApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MitsubishiApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

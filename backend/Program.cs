@@ -8,6 +8,7 @@ using Scalar.AspNetCore;
 using System.Text;
 using Hangfire;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,19 +80,42 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<InvoicePdfService>();
 
 // CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000", "http://localhost:5500", "http://127.0.0.1:5500")
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
+                "https://car-service.syukrie.my.id",
+                "http://car-service.syukrie.my.id"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Disposition");
     });
 });
 
+// Forwarded Headers (untuk reverse proxy Cloudflare + Nginx)
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto |
+        ForwardedHeaders.XForwardedHost;
+
+    // Trust semua proxy (karena di balik Cloudflare + Nginx)
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 // ====================================================================
 // 1. AUTO-MIGRATE (PALING PERTAMA — buat database + tabel sebelum apapun)
