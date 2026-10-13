@@ -161,6 +161,21 @@ if (app.Environment.IsDevelopment())
             });
     });
 }
+// ===== AUTO-MIGRATE DATABASE =====
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        db.Database.Migrate();
+        Console.WriteLine("✅ Database migrated successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Migration failed: {ex.Message}");
+        throw;
+    }
+}
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
