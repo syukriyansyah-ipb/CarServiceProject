@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kendaraan — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Model</label>
+        <input id="filterModel" style="width:200px;">
+        <label>Cari</label>
+        <input id="filterSearch" placeholder="Plat / nama customer..." style="width:260px;">
+        <button class="btn btn-primary" id="btnSearch">
+            <span class="k-icon k-i-search"></span> Cari
+        </button>
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+    </div>
+    <div id="gridVehicles"></div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('dashboard', 'Daftar Kendaraan', 'Kelola data kendaraan pelanggan Mitsubishi');
+
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                var q = $('#filterSearch').val().trim();
+                var url = q
+                    ? API_URL + '/search?q=' + encodeURIComponent(q)
+                    : API_URL + '/vehicles';
+
+                apiCall(url, 'GET', null, function (data) {
+                    opts.success(data.map(function (x) {
+                        return {
+                            id: x.id,
+                            licensePlate: x.licensePlate,
+                            vehicleModelName: x.vehicleModelName || (x.vehicleModel && x.vehicleModel.name) || '',
+                            variant: x.variant,
+                            color: x.color,
+                            price: x.price,
+                            customerName: x.customerName || (x.customer && x.customer.fullName) || '',
+                            customerPhone: x.customerPhone || (x.customer && x.customer.phone) || ''
+                        };
+                    }));
+                });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    $('#gridVehicles').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'id', title: 'ID', width: 60 },
+            { field: 'licensePlate', title: 'Plat Nomor', width: 140,
+              template: '<strong>#= licensePlate #</strong>' },
+            { field: 'vehicleModelName', title: 'Model', width: 150 },
+            { field: 'variant', title: 'Varian', width: 140 },
+            { field: 'color', title: 'Warna', width: 110 },
+            { field: 'price', title: 'Harga', width: 160,
+              template: 'Rp #= kendo.toString(price, "N0") #' },
+            { field: 'customerName', title: 'Customer', width: 170 },
+            { field: 'customerPhone', title: 'Telepon', width: 140 }
+        ]
+    }));
+
+    apiCall(API_URL + '/vehiclemodels', 'GET', null, function (models) {
+        $('#filterModel').kendoComboBox({
+            dataTextField: 'name',
+            dataValueField: 'name',
+            dataSource: models,
+            filter: 'contains',
+            placeholder: 'Semua model...',
+            change: function () { ds.read(); }
+        });
+    });
+
+    $('#btnSearch').on('click', function () { ds.read(); });
+    $('#btnReset').on('click', function () {
+        $('#filterSearch').val('');
+        var c = $('#filterModel').data('kendoComboBox');
+        if (c) c.value('');
+        ds.read();
+    });
+    $('#filterSearch').on('keypress', function (e) {
+        if (e.which === 13) ds.read();
+    });
+});
+</script>
+</body>
+</html>

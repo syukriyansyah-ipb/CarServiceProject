@@ -1,0 +1,333 @@
+### Login (dapat token)
+POST http://localhost:5017/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@mitsubishi.com",
+  "password": "Admin123!"
+}
+
+### Cek Customers
+GET http://localhost:5017/api/customers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+{
+    "id": 1,
+    "customerCode": "CUST-2024-0001",
+    "fullName": "Budi Santoso",
+    "phone": "081234567890",
+    "email": "budi@example.com",
+    "address": "Jl. Sudirman No. 1",
+    "city": "Jakarta",
+    "createdAt": "2026-10-10T02:54:05.034389"
+  },
+  {
+    "id": 2,
+    "customerCode": "CUST-2024-0002",
+    "fullName": "Siti Aminah",
+    "phone": "081298765432",
+    "email": "siti@example.com",
+    "address": "Jl. Thamrin No. 5",
+    "city": "Bandung",
+    "createdAt": "2026-10-10T02:54:21.3266326"
+  },
+  {
+    "id": 3,
+    "customerCode": "CUST-2024-0003",
+    "fullName": "Andi Wijaya",
+    "phone": "081211112222",
+    "email": "andi@example.com",
+    "address": "Jl. Gatot Subroto No. 10",
+    "city": "Surabaya",
+    "createdAt": "2026-10-10T02:54:31.0790523"
+  }
+
+### Cek Vehicles
+GET http://localhost:5017/api/vehicles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+{
+    "id": 5,
+    "licensePlate": "B 1234 XYZ",
+    "variant": "Ultimate AT",
+    "year": 2023,
+    "color": "Putih",
+    "price": 280000000.00,
+    "vehicleModelName": "Xpander"
+  },
+  {
+    "id": 6,
+    "licensePlate": "B 5678 ABC",
+    "variant": "Dakar 4x4",
+    "year": 2023,
+    "color": "Hitam",
+    "price": 750000000.00,
+    "vehicleModelName": "Pajero Sport"
+  },
+  {
+    "id": 7,
+    "licensePlate": "B 9999 DEF",
+    "variant": "GLS",
+    "year": 2023,
+    "color": "Silver",
+    "price": 450000000.00,
+    "vehicleModelName": "L300"
+  }
+
+### Cek Dealers
+GET http://localhost:5017/api/dealers
+
+{
+    "id": 1,
+    "code": "MTR-JKT-01",
+    "name": "Mitsubishi Jakarta Selatan",
+    "address": "Jl. TB Simatupang No. 10",
+    "city": "Jakarta",
+    "province": "DKI Jakarta",
+    "phone": "021-12345678",
+    "email": "jkt-selatan@mitsubishi.co.id",
+    "maxSlotPerDay": 25,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "code": "MTR-BDG-01",
+    "name": "Mitsubishi Bandung",
+    "address": "Jl. Asia Afrika No. 100",
+    "city": "Bandung",
+    "province": "Jawa Barat",
+    "phone": "022-87654321",
+    "email": "bandung@mitsubishi.co.id",
+    "maxSlotPerDay": 15,
+    "isActive": true
+  }
+### Cek ServiceTypes
+GET http://localhost:5017/api/servicetypes
+
+{
+    "id": 1,
+    "code": "PERIODIC-10K",
+    "name": "Servis Berkala 10.000 KM",
+    "description": "Ganti oli, filter oli, cek rem, cek kelistrikan",
+    "category": "Periodic",
+    "estimatedDuration": 90,
+    "estimatedCost": 750000.00,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "code": "PERIODIC-20K",
+    "name": "Servis Berkala 20.000 KM",
+    "description": "Servis 10K + ganti filter udara + tune up",
+    "category": "Periodic",
+    "estimatedDuration": 120,
+    "estimatedCost": 1200000.00,
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "code": "REPAIR-BRAKE",
+    "name": "Perbaikan Sistem Rem",
+    "description": "Ganti kampas rem, bleeding, cek minyak rem",
+    "category": "Repair",
+    "estimatedDuration": 180,
+    "estimatedCost": 850000.00,
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "code": "EMERGENCY-TOW",
+    "name": "Layanan Darurat & Towing",
+    "description": "Layanan panggilan darurat di jalan",
+    "category": "Emergency",
+    "estimatedDuration": 240,
+    "estimatedCost": 500000.00,
+    "isActive": true
+  }
+
+### Cek Mechanics
+GET http://localhost:5017/api/mechanics
+
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Oct 2026 21:55:40 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    "id": 1,
+    "employeeCode": "MEC-JKT-001",
+    "fullName": "Ahmad Sutrisno",
+    "dealerId": 1,
+    "dealerName": "Mitsubishi Jakarta Selatan",
+    "specialization": "Engine",
+    "certification": "Mitsubishi Certified Level 2",
+    "phone": "081111111111",
+    "isAvailable": true,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "employeeCode": "MEC-JKT-002",
+    "fullName": "Bambang Hartono",
+    "dealerId": 1,
+    "dealerName": "Mitsubishi Jakarta Selatan",
+    "specialization": "Electrical",
+    "certification": "Mitsubishi Certified Level 1",
+    "phone": "081222222222",
+    "isAvailable": true,
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "employeeCode": "MEC-BDG-001",
+    "fullName": "Cecep Supriadi",
+    "dealerId": 2,
+    "dealerName": "Mitsubishi Bandung",
+    "specialization": "Body & Paint",
+    "certification": "Mitsubishi Certified Level 3",
+    "phone": "081333333333",
+    "isAvailable": true,
+    "isActive": true
+  }
+]
+
+### Cek slot tersedia - Dealer Jakarta, tanggal besok
+GET http://localhost:5017/api/bookings/available-slots?dealerId=1&date=2025-10-12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Create booking - Budi servis Xpander
+POST http://localhost:5017/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "vehicleId": 5,
+  "dealerId": 1,
+  "serviceTypeId": 1,
+  "bookingDate": "2026-10-12",
+  "bookingTime": "09:00:00",
+  "complaintNotes": "Servis rutin 10.000 KM, ada bunyi aneh di rem depan",
+  "customerNotes": "Mohon dicek juga AC",
+  "kmAtService": 10500
+}
+
+### Test 4 Cek Slot Setelah Booking
+GET http://localhost:5017/api/bookings/available-slots?dealerId=1&date=2026-10-12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Booking Siti - slot 10:00
+POST http://localhost:5017/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "customerId": 2,
+  "vehicleId": 7,
+  "dealerId": 1,
+  "serviceTypeId": 2,
+  "bookingDate": "2026-10-12",
+  "bookingTime": "10:00:00",
+  "complaintNotes": "Servis berkala 20.000 KM",
+  "kmAtService": 20000
+}
+
+### Confirm booking #1
+PUT http://localhost:5017/api/bookings/1/confirm
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### cek
+GET http://localhost:5017/api/bookings/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### asign mekanik
+PUT http://localhost:5017/api/bookings/1/assign-mechanic
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "mechanicId": 1
+}
+
+### cek
+GET http://localhost:5017/api/bookings/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Coba assign Cecep (dealer Bandung) ke booking Jakarta - HARUS 400
+PUT http://localhost:5017/api/bookings/1/assign-mechanic
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "mechanicId": 3
+}
+
+### start service
+PUT http://localhost:5017/api/bookings/1/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### complete
+PUT http://localhost:5017/api/bookings/1/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "kmAtService": 10550,
+  "actualCost": 850000,
+  "advisorNotes": "Sudah ganti oli, filter, cek rem. Kampas rem depan masih 60%, aman."
+}
+
+### tes booking complete
+DELETE http://localhost:5017/api/bookings/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### vehicle bukan milik cus
+POST http://localhost:5017/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "vehicleId": 7,
+  "dealerId": 1,
+  "serviceTypeId": 1,
+  "bookingDate": "2025-10-15",
+  "bookingTime": "09:00:00"
+}
+
+### jam diluar oper
+POST http://localhost:5017/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "vehicleId": 5,
+  "dealerId": 1,
+  "serviceTypeId": 1,
+  "bookingDate": "2026-10-15",
+  "bookingTime": "20:00:00"
+}
+
+### Semua booking
+GET http://localhost:5017/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Filter by dealer
+GET http://localhost:5017/api/bookings?dealerId=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Filter by status
+GET http://localhost:5017/api/bookings?status=Completed
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Filter by customer
+GET http://localhost:5017/api/bookings?customerId=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM
+
+### Filter by date
+GET http://localhost:5017/api/bookings?date=2026-10-12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjcyMzg4OGMzLTYyNjAtNDdkMy05YWVhLTI5OTE3Yzk1ZTg1OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzI4NjMsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.rXqDJ0iOMA1ErlGj1RM0S_7LnYtCpZFQpsxo26pATOM

@@ -1,0 +1,780 @@
+/* ============================================================
+   MITSUBISHI SERVICE — Global Stylesheet
+   ============================================================ */
+
+:root {
+    /* Brand */
+    --mi-red: #E60012;
+    --mi-red-dark: #B8000E;
+    --mi-red-soft: rgba(230, 0, 18, 0.08);
+
+    /* Sidebar */
+    --sb-bg: #14161f;
+    --sb-bg-2: #1c1f2e;
+    --sb-text: #8b92a4;
+    --sb-text-active: #ffffff;
+    --sb-border: rgba(255,255,255,0.06);
+
+    /* Surface */
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --border: #e5e8ee;
+    --border-light: #f0f2f6;
+
+    /* Text */
+    --tx: #1a1d29;
+    --tx-2: #6b7280;
+    --tx-3: #9ca3af;
+
+    /* Feedback */
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --danger: #dc2626;
+    --info: #0891b2;
+
+    /* Shadow */
+    --sh-sm: 0 1px 2px rgba(20,22,31,0.04);
+    --sh-md: 0 4px 12px rgba(20,22,31,0.08);
+    --sh-lg: 0 12px 32px rgba(20,22,31,0.12);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    color: var(--tx);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--sb-bg);
+    color: var(--sb-text);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid rgba(0,0,0,0.4);
+}
+
+.sidebar-brand {
+    padding: 22px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--sb-border);
+}
+
+.brand-mark {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 3 diamond mark (abstract, Mitsubishi-inspired) */
+.mark-diamond {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: var(--mi-red);
+    transform: rotate(45deg);
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(230, 0, 18, 0.4);
+}
+.mark-diamond.d1 { top: 4px; left: 50%; margin-left: -6.5px; }
+.mark-diamond.d2 { bottom: 4px; left: 6px; }
+.mark-diamond.d3 { bottom: 4px; right: 6px; }
+
+.brand-text { line-height: 1.15; }
+.brand-name {
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: 1.5px;
+}
+.brand-sub {
+    font-size: 10px;
+    color: var(--sb-text);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+/* Nav */
+.sidebar-nav {
+    flex: 1;
+    padding: 18px 12px;
+    overflow-y: auto;
+}
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.nav-section {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #5a6070;
+    letter-spacing: 1.3px;
+    font-weight: 700;
+    padding: 8px 14px 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    color: var(--sb-text);
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+    margin-bottom: 2px;
+    cursor: pointer;
+    position: relative;
+}
+.nav-item .k-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+.nav-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+}
+.nav-item.active {
+    background: var(--mi-red);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(230, 0, 18, 0.35);
+}
+.nav-item.active .k-icon { opacity: 1; }
+
+/* Footer */
+.sidebar-footer {
+    padding: 14px;
+    border-top: 1px solid var(--sb-border);
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--mi-red), var(--mi-red-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12.5px;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(230, 0, 18, 0.3);
+}
+.user-meta { min-width: 0; flex: 1; }
+.user-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-role {
+    font-size: 10.5px;
+    color: var(--sb-text);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-logout {
+    width: 100%;
+    padding: 9px 12px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--sb-text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-logout:hover {
+    background: rgba(220, 53, 69, 0.15);
+    border-color: rgba(220, 53, 69, 0.4);
+    color: #ff6b7a;
+}
+
+/* ============================================================
+   MAIN AREA
+   ============================================================ */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.topbar {
+    background: #fff;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+.topbar-left { min-width: 0; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+
+.page-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--tx);
+    letter-spacing: -0.3px;
+}
+.page-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--tx-2);
+}
+
+.content-area {
+    flex: 1;
+    padding: 26px 32px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+.card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: var(--sh-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 18px;
+}
+.card-title {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--tx);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+}
+.btn .k-icon { font-size: 14px; }
+
+.btn-primary { background: var(--mi-red); color: #fff; }
+.btn-primary:hover { background: var(--mi-red-dark); box-shadow: 0 4px 14px rgba(230, 0, 18, 0.35); }
+
+.btn-secondary { background: #eef0f5; color: #4a5268; }
+.btn-secondary:hover { background: #e2e6ee; }
+
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: #15803d; }
+
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-warning:hover { background: #d97706; }
+
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    white-space: nowrap;
+}
+.badge-pending    { background: #fef3c7; color: #92400e; }
+.badge-confirmed  { background: #dbeafe; color: #1e40af; }
+.badge-inprogress { background: #cffafe; color: #155e75; }
+.badge-completed  { background: #d1fae5; color: #065f46; }
+.badge-cancelled  { background: #fee2e2; color: #991b1b; }
+.badge-unpaid     { background: #fee2e2; color: #991b1b; }
+.badge-partial    { background: #fef3c7; color: #92400e; }
+.badge-paid       { background: #d1fae5; color: #065f46; }
+
+/* ============================================================
+   TOOLBAR (di atas grid)
+   ============================================================ */
+.toolbar {
+    background: var(--card);
+    padding: 14px 20px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.toolbar label {
+    font-weight: 600;
+    color: var(--tx-2);
+    font-size: 12.5px;
+    margin-right: 2px;
+}
+.toolbar .toolbar-spacer { flex: 1; }
+
+/* ============================================================
+   KENDO GRID OVERRIDES
+   ============================================================ */
+.k-grid {
+    border: 1px solid var(--border) !important;
+    border-top: none !important;
+    border-radius: 0 0 12px 12px !important;
+    box-shadow: var(--sh-sm) !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+}
+.k-grid-header {
+    background: #f9fafc !important;
+    border-bottom: 1px solid var(--border) !important;
+    font-weight: 600 !important;
+}
+.k-grid-header th {
+    color: #5a6278 !important;
+    font-weight: 700 !important;
+    font-size: 11.5px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border-color: var(--border-light) !important;
+    padding: 12px 14px !important;
+}
+.k-grid tbody tr { transition: background 0.1s; }
+.k-grid tbody tr:hover { background: #f9fafc !important; }
+.k-grid td {
+    border-color: var(--border-light) !important;
+    padding: 12px 14px !important;
+    vertical-align: middle !important;
+}
+.k-grid .k-grid-pager {
+    border-top: 1px solid var(--border-light) !important;
+    background: #fbfcfe !important;
+    border-radius: 0 0 12px 12px !important;
+    padding: 8px 14px !important;
+}
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--tx-3);
+}
+.empty-state .k-icon { font-size: 40px; opacity: 0.35; margin-bottom: 10px; display: block; }
+.empty-state p { margin: 0; font-size: 13px; }
+
+/* ============================================================
+   KENDO COMPONENTS OVERRIDES
+   ============================================================ */
+.k-input, .k-input-inner, .k-picker,
+.k-combobox, .k-datepicker, .k-dropdownlist, .k-numerictextbox {
+    font-family: inherit !important;
+    border-radius: 8px !important;
+}
+.k-picker, .k-input, .k-dropdownlist {
+    border-color: #d5dae6 !important;
+}
+.k-picker:focus, .k-input:focus,
+.k-picker.k-focus, .k-input.k-focus {
+    border-color: var(--mi-red) !important;
+    box-shadow: 0 0 0 3px rgba(230,0,18,0.1) !important;
+}
+
+/* Dialog */
+.k-dialog-wrapper .k-dialog {
+    border-radius: 14px !important;
+    box-shadow: var(--sh-lg) !important;
+    overflow: hidden;
+    border: none !important;
+}
+.k-dialog-wrapper .k-dialog-titlebar {
+    background: #fff !important;
+    color: var(--tx) !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    padding: 18px 22px !important;
+}
+.k-dialog-wrapper .k-dialog-title {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+}
+.k-dialog-wrapper .k-dialog-content {
+    padding: 22px !important;
+    background: #fff !important;
+}
+.k-dialog-wrapper .k-dialog-actions {
+    padding: 14px 22px 22px !important;
+    background: #fff !important;
+    border-top: none !important;
+}
+.k-dialog-wrapper .k-dialog-buttongroup .k-button {
+    border-radius: 8px !important;
+    padding: 9px 18px !important;
+    font-weight: 600 !important;
+    font-family: inherit !important;
+}
+.k-dialog-wrapper .k-dialog-buttongroup .k-button.k-primary {
+    background: var(--mi-red) !important;
+    border-color: var(--mi-red) !important;
+    color: #fff !important;
+}
+.k-dialog-wrapper .k-dialog-buttongroup .k-button.k-primary:hover {
+    background: var(--mi-red-dark) !important;
+}
+
+/* Notification Toast */
+#app-notification .k-notification {
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: var(--sh-lg) !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+.toast {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    min-width: 260px;
+}
+.toast .k-icon { font-size: 18px; }
+.toast-success { background: #16a34a; }
+.toast-error   { background: #dc2626; }
+.toast-info    { background: #0891b2; }
+.toast-warning { background: #f59e0b; }
+
+/* ============================================================
+   FORM ELEMENTS (di dalam dialog/card)
+   ============================================================ */
+.form-group { margin-bottom: 16px; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    color: #5a6278;
+    letter-spacing: 0.2px;
+}
+.form-group .k-picker, .form-group .k-input,
+.form-group .k-combobox, .form-group .k-dropdownlist,
+.form-group .k-numerictextbox, .form-group .k-datepicker,
+.form-group .k-timepicker {
+    width: 100%;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* ============================================================
+   LOGIN PAGE (standalone)
+   ============================================================ */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(230, 0, 18, 0.15), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(230, 0, 18, 0.08), transparent 45%),
+        linear-gradient(135deg, #0d0f16 0%, #1a1d29 100%);
+    position: relative;
+    overflow: hidden;
+}
+.login-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+.login-box {
+    position: relative;
+    background: #fff;
+    border-radius: 18px;
+    padding: 44px 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 1;
+}
+
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 26px;
+}
+.login-brand-mark {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 14px;
+}
+.login-brand-mark .mark-diamond {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 20px rgba(230, 0, 18, 0.5);
+}
+.login-brand-mark .d1 { top: 6px; margin-left: -9px; }
+.login-brand-mark .d2 { bottom: 6px; left: 10px; }
+.login-brand-mark .d3 { bottom: 6px; right: 10px; }
+
+.login-brand h1 {
+    font-size: 20px;
+    color: #14161f;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+.login-brand .tagline {
+    color: #8b92a4;
+    font-size: 11.5px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.login-form .form-group { margin-bottom: 16px; }
+.login-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    color: #5a6278;
+}
+.login-form .k-input, .login-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d5dae6;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.login-form .k-input:focus, .login-form input:focus {
+    outline: none;
+    border-color: var(--mi-red);
+    box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.12);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: var(--mi-red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    margin-top: 4px;
+}
+.btn-login:hover { background: var(--mi-red-dark); box-shadow: 0 8px 20px rgba(230, 0, 18, 0.35); }
+.btn-login:disabled { opacity: 0.7; cursor: wait; }
+
+.login-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-top: 14px;
+    display: none;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 11.5px;
+    color: #9ca3af;
+}
+
+/* ============================================================
+   DETAIL PAGE (booking-detail)
+   ============================================================ */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.detail-code {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--mi-red);
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.detail-meta {
+    color: var(--tx-3);
+    font-size: 12.5px;
+    margin-top: 4px;
+}
+.detail-rows { display: flex; flex-direction: column; gap: 12px; }
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border-light);
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row .k {
+    color: var(--tx-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.detail-row .v {
+    color: var(--tx);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: right;
+}
+
+.action-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.info-banner {
+    padding: 14px 18px;
+    background: #eef6ff;
+    border-left: 3px solid var(--info);
+    border-radius: 8px;
+    color: #0c4a6e;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.info-banner .k-icon { font-size: 18px; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+    .sidebar { width: 76px; }
+    .brand-text, .nav-label, .user-meta, .nav-section { display: none; }
+    .nav-item { justify-content: center; padding: 12px; }
+    .user-card { justify-content: center; }
+    .sidebar-brand { justify-content: center; padding: 20px 10px; }
+    .btn-logout span:not(.k-icon) { display: none; }
+    .content-area { padding: 18px; }
+    .topbar { padding: 16px 20px; }
+    .page-title { font-size: 17px; }
+    .form-row { grid-template-columns: 1fr; }
+}
+
+/* Info dealer di sidebar */
+.user-dealer {
+    font-size: 11px;
+    color: #ff7a7a;
+    margin-bottom: 10px;
+    padding: 7px 12px;
+    background: rgba(230, 0, 18, 0.08);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+.user-dealer .k-icon { font-size: 13px; flex-shrink: 0; }

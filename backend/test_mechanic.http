@@ -1,0 +1,59 @@
+### Login (fresh)
+POST http://localhost:5017/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@mitsubishi.com",
+  "password": "Admin123!"
+}
+
+### Create Mechanic - Jakarta 1
+POST http://localhost:5017/api/mechanics
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6ImNlNDFhZTQ2LTc1YjYtNGZkNS1hNTI2LTIzNDQzZGU0Y2ZkNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzAwODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.34paAu94iK3wonF3j2Cdvu_QIUku7Y2bflS48knKBFI
+Content-Type: application/json
+
+{
+  "employeeCode": "MEC-JKT-001",
+  "fullName": "Ahmad Sutrisno",
+  "dealerId": 1,
+  "specialization": "Engine",
+  "certification": "Mitsubishi Certified Level 2",
+  "phone": "081111111111",
+  "isAvailable": true
+}
+
+### Create Mechanic - Jakarta 2
+POST http://localhost:5017/api/mechanics
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6ImNlNDFhZTQ2LTc1YjYtNGZkNS1hNTI2LTIzNDQzZGU0Y2ZkNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzAwODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.34paAu94iK3wonF3j2Cdvu_QIUku7Y2bflS48knKBFI
+Content-Type: application/json
+
+{
+  "employeeCode": "MEC-JKT-002",
+  "fullName": "Bambang Hartono",
+  "dealerId": 1,
+  "specialization": "Electrical",
+  "certification": "Mitsubishi Certified Level 1",
+  "phone": "081222222222",
+  "isAvailable": true
+}
+
+### Create Mechanic - Bandung
+POST http://localhost:5017/api/mechanics
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6ImNlNDFhZTQ2LTc1YjYtNGZkNS1hNTI2LTIzNDQzZGU0Y2ZkNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2NzAwODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.34paAu94iK3wonF3j2Cdvu_QIUku7Y2bflS48knKBFI
+Content-Type: application/json
+
+{
+  "employeeCode": "MEC-BDG-001",
+  "fullName": "Cecep Supriadi",
+  "dealerId": 2,
+  "specialization": "Body & Paint",
+  "certification": "Mitsubishi Certified Level 3",
+  "phone": "081333333333",
+  "isAvailable": true
+}
+
+### Get all mechanics
+GET http://localhost:5017/api/mechanics
+
+### Get mechanics di dealer 1 saja
+GET http://localhost:5017/api/mechanics?dealerId=1

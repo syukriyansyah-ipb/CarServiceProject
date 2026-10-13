@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kelola User — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Role</label>
+        <input id="filterRole" style="width:200px;">
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+        <div class="toolbar-spacer"></div>
+        <button class="btn btn-primary" id="btnNew">
+            <span class="k-icon k-i-plus"></span> Tambah User
+        </button>
+    </div>
+    <div id="gridUsers"></div>
+</div>
+
+<!-- Dialog New User -->
+<div id="dlgNew">
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="uEmail" placeholder="user@mitsubishi.co.id">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="text" id="uPassword" placeholder="Minimal 6 karakter">
+    </div>
+    <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="uFullName" placeholder="Contoh: Adi Nugroho">
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Role</label>
+            <input id="uRole">
+        </div>
+        <div class="form-group" id="dealerField">
+            <label>Dealer</label>
+            <input id="uDealer">
+        </div>
+    </div>
+    <div class="info-banner" style="margin-top:8px;">
+        <span class="k-icon k-i-info-circle"></span>
+        <div id="roleHint">Role <strong>ServiceAdvisor</strong> & <strong>Mechanic</strong> harus terikat ke dealer.</div>
+    </div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('users', 'Kelola User', 'Atur akun staff dan akses mereka');
+
+    var ROLES = [
+        { text: 'SuperAdmin',      value: 'SuperAdmin',      needsDealer: false },
+        { text: 'DealerAdmin',     value: 'DealerAdmin',     needsDealer: true  },
+        { text: 'Service Advisor', value: 'ServiceAdvisor',  needsDealer: true  },
+        { text: 'Mechanic',        value: 'Mechanic',        needsDealer: true  },
+        { text: 'Customer',        value: 'Customer',        needsDealer: false }
+    ];
+
+    /* ===== GRID ===== */
+    var allData = [];
+
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                apiCall(API_URL + '/users', 'GET', null, function (data) {
+                    allData = data;
+                    applyFilter(opts);
+                });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    function applyFilter(opts) {
+        var roleFilter = $('#filterRole').data('kendoDropDownList')?.value() || '';
+        var filtered = !roleFilter ? allData : allData.filter(function (u) { return u.role === roleFilter; });
+        opts.success(filtered);
+    }
+
+    $('#gridUsers').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'id', title: 'ID', width: 60 },
+            { field: 'fullName', title: 'Nama', width: 220 },
+            { field: 'email', title: 'Email', width: 260 },
+            { field: 'role', title: 'Role', width: 150,
+              template: function (d) {
+                  var cls = 'badge-confirmed';
+                  if (d.role === 'SuperAdmin') cls = 'badge-cancelled';
+                  if (d.role === 'DealerAdmin') cls = 'badge-partial';
+                  if (d.role === 'ServiceAdvisor') cls = 'badge-inprogress';
+                  if (d.role === 'Mechanic') cls = 'badge-pending';
+                  if (d.role === 'Customer') cls = 'badge-completed';
+                  return '<span class="badge ' + cls + '">' + d.role + '</span>';
+              }
+            },
+            { field: 'dealerName', title: 'Dealer', width: 220,
+                template: function(d) {
+                    return d.dealerName
+                        ? d.dealerName
+                        : '<span style="color:#9ca3af;">— Head Office —</span>';
+                }
+            },
+            { field: 'createdAt', title: 'Dibuat', width: 160,
+              template: '#= kendo.toString(kendo.parseDate(createdAt), "dd MMM yyyy") #'
+            }
+        ]
+    }));
+
+    /* Filter Role */
+    $('#filterRole').kendoDropDownList({
+        dataSource: [{ text: 'Semua Role', value: '' }].concat(ROLES),
+        dataTextField: 'text',
+        dataValueField: 'value',
+        value: '',
+        change: function () { ds.read(); }
+    });
+
+    $('#btnReset').on('click', function () {
+        $('#filterRole').data('kendoDropDownList').value('');
+        ds.read();
+    });
+
+    /* ===== DIALOG NEW USER ===== */
+    var dlg = $('#dlgNew').kendoDialog({
+        title: 'Tambah User Baru',
+        width: 620,
+        modal: true,
+        visible: false,
+        actions: [
+            { text: 'Batal' },
+            { text: 'Simpan User', primary: true, action: submitUser }
+        ]
+    }).data('kendoDialog');
+
+    $('#btnNew').on('click', function () {
+        resetForm();
+        dlg.open();
+    });
+
+    function resetForm() {
+        $('#uEmail').val('');
+        $('#uPassword').val('');
+        $('#uFullName').val('');
+        $('#uRole').data('kendoDropDownList').select(2); // default: ServiceAdvisor
+        $('#uDealer').data('kendoComboBox').value('');
+        $('#dealerField').show();
+    }
+
+    /* Init components */
+    $('#uRole').kendoDropDownList({
+        dataSource: ROLES,
+        dataTextField: 'text',
+        dataValueField: 'value',
+        value: 'ServiceAdvisor',
+        change: function () {
+            var role = this.value();
+            var meta = ROLES.find(function (r) { return r.value === role; });
+            if (meta && meta.needsDealer) {
+                $('#dealerField').show();
+                $('#roleHint').html('Role <strong>' + role + '</strong> harus terikat ke dealer.');
+            } else {
+                $('#dealerField').hide();
+                $('#roleHint').html('Role <strong>' + role + '</strong> tidak terikat dealer.');
+            }
+        }
+    });
+
+    apiCall(API_URL + '/dealers', 'GET', null, function (dealers) {
+        $('#uDealer').kendoComboBox({
+            dataTextField: 'name',
+            dataValueField: 'id',
+            dataSource: dealers,
+            filter: 'contains',
+            placeholder: 'Pilih dealer...'
+        });
+    });
+
+    function submitUser() {
+        var role = $('#uRole').data('kendoDropDownList').value();
+        var meta = ROLES.find(function (r) { return r.value === role; });
+
+        var data = {
+            email:    $('#uEmail').val().trim(),
+            password: $('#uPassword').val(),
+            fullName: $('#uFullName').val().trim(),
+            role:     role,
+            dealerId: meta && meta.needsDealer
+                ? $('#uDealer').data('kendoComboBox').value()
+                : null
+        };
+
+        if (!data.email || !data.password || !data.fullName) {
+            showToast('error', 'Email, password & nama lengkap wajib diisi');
+            return false;
+        }
+        if (meta && meta.needsDealer && !data.dealerId) {
+            showToast('error', 'Pilih dealer untuk role ini');
+            return false;
+        }
+
+        apiCall(API_URL + '/users', 'POST', data, function () {
+            showToast('success', 'User ' + data.fullName + ' berhasil dibuat');
+            ds.read();
+        }, function (xhr) {
+            showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal membuat user');
+        });
+
+        return true;
+    }
+});
+</script>
+</body>
+</html>

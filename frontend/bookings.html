@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Booking Servis — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Status</label>
+        <input id="filterStatus" style="width:180px;">
+        <label>Dealer</label>
+        <input id="filterDealer" style="width:240px;">
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+        <div class="toolbar-spacer"></div>
+        <button class="btn btn-primary" id="btnNew">
+            <span class="k-icon k-i-plus"></span> Booking Baru
+        </button>
+    </div>
+    <div id="gridBookings"></div>
+</div>
+
+<!-- Dialog New Booking -->
+<div id="dialogNew">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Customer</label>
+            <input id="fCustomer">
+        </div>
+        <div class="form-group">
+            <label>Kendaraan</label>
+            <input id="fVehicle">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Dealer</label>
+            <input id="fDealer">
+        </div>
+        <div class="form-group">
+            <label>Jenis Servis</label>
+            <input id="fServiceType">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Tanggal</label>
+            <input id="fDate">
+        </div>
+        <div class="form-group">
+            <label>Jam</label>
+            <input id="fTime">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>KM Saat Ini <span style="color:#9ca3af;font-weight:400;">(opsional)</span></label>
+        <input id="fKm" type="number" min="0">
+    </div>
+    <div class="form-group">
+        <label>Keluhan Customer</label>
+        <textarea id="fComplaint" rows="3" style="width:100%;padding:10px 12px;border:1px solid #d5dae6;border-radius:8px;font-family:inherit;font-size:13.5px;resize:vertical;" placeholder="Contoh: Bunyi aneh di rem depan..."></textarea>
+    </div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('bookings', 'Booking Servis', 'Kelola jadwal servis kendaraan');
+
+    var masterCustomers = [];
+    var masterVehicles  = [];
+
+    /* ============ GRID ============ */
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                var status = $('#filterStatus').data('kendoDropDownList')?.value() || '';
+                var dealerId = $('#filterDealer').data('kendoComboBox')?.value() || '';
+                var params = [];
+                if (status)   params.push('status=' + status);
+                if (dealerId) params.push('dealerId=' + dealerId);
+                var url = API_URL + '/bookings' + (params.length ? '?' + params.join('&') : '');
+                apiCall(url, 'GET', null, function (data) { opts.success(data); });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    $('#gridBookings').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'bookingCode', title: 'Kode Booking', width: 170,
+              template: '<a href="booking-detail.html?id=#= id #" class="link-detail">#= bookingCode #</a>' },
+            { field: 'customerName', title: 'Customer', width: 160 },
+            { field: 'licensePlate', title: 'Kendaraan', width: 210,
+              template: '#= licensePlate # <span class="muted">· #= vehicleModelName #</span>' },
+            { field: 'dealerName', title: 'Dealer', width: 200 },
+            { field: 'serviceTypeName', title: 'Jenis Servis', width: 190 },
+            { field: 'bookingDate', title: 'Tanggal', width: 120,
+              template: '#= kendo.toString(kendo.parseDate(bookingDate), "dd MMM yyyy") #' },
+            { field: 'bookingTime', title: 'Jam', width: 80,
+              template: '#= bookingTime.substring(0,5) #' },
+            { field: 'status', title: 'Status', width: 130,
+              template: function (d) { return '<span class="badge badge-' + d.status.toLowerCase() + '">' + d.status + '</span>'; } },
+            { field: 'mechanicName', title: 'Mekanik', width: 160,
+              template: '#= mechanicName || "<span class=\\"muted\\">— Belum assign —</span>" #' }
+        ]
+    }));
+
+    /* Filter status */
+    $('#filterStatus').kendoDropDownList({
+        dataSource: [
+            { text: 'Semua Status', value: '' },
+            { text: 'Pending',      value: 'Pending' },
+            { text: 'Confirmed',    value: 'Confirmed' },
+            { text: 'InProgress',   value: 'InProgress' },
+            { text: 'Completed',    value: 'Completed' },
+            { text: 'Cancelled',    value: 'Cancelled' }
+        ],
+        dataTextField: 'text',
+        dataValueField: 'value',
+        value: '',
+        change: function () { ds.read(); }
+    });
+
+    /* Filter dealer */
+    apiCall(API_URL + '/dealers', 'GET', null, function (dealers) {
+        $('#filterDealer').kendoComboBox({
+            dataTextField: 'name',
+            dataValueField: 'id',
+            dataSource: dealers,
+            filter: 'contains',
+            placeholder: 'Semua dealer...',
+            change: function () { ds.read(); }
+        });
+    });
+
+    $('#btnReset').on('click', function () {
+        $('#filterStatus').data('kendoDropDownList').value('');
+        var c = $('#filterDealer').data('kendoComboBox');
+        if (c) c.value('');
+        ds.read();
+    });
+
+    /* ============ DIALOG NEW BOOKING ============ */
+    var dlg = $('#dialogNew').kendoDialog({
+        title: 'Buat Booking Baru',
+        width: 640,
+        modal: true,
+        visible: false,
+        actions: [
+            { text: 'Batal' },
+            { text: 'Simpan Booking', primary: true, action: submitBooking }
+        ]
+    }).data('kendoDialog');
+
+    $('#btnNew').on('click', function () {
+        resetForm();
+        loadMaster();
+        dlg.open();
+    });
+
+    function resetForm() {
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        $('#fDate').data('kendoDatePicker')?.value(tomorrow);
+        $('#fTime').data('kendoDropDownList')?.value('09:00');
+        $('#fKm').val('');
+        $('#fComplaint').val('');
+    }
+
+    function loadMaster() {
+        /* Customers */
+        apiCall(API_URL + '/customers', 'GET', null, function (data) {
+            masterCustomers = data;
+            var $el = $('#fCustomer');
+            if (!$el.data('kendoComboBox')) {
+                $el.kendoComboBox({
+                    dataTextField: 'fullName',
+                    dataValueField: 'id',
+                    filter: 'contains',
+                    placeholder: 'Pilih customer...',
+                    change: onCustomerChange
+                });
+            }
+            $el.data('kendoComboBox').setDataSource(masterCustomers);
+            if (masterCustomers.length) {
+                $el.data('kendoComboBox').select(0);
+                onCustomerChange();
+            }
+        });
+
+        /* Dealers */
+        apiCall(API_URL + '/dealers', 'GET', null, function (data) {
+            var $el = $('#fDealer');
+            if (!$el.data('kendoComboBox')) {
+                $el.kendoComboBox({
+                    dataTextField: 'name',
+                    dataValueField: 'id',
+                    filter: 'contains',
+                    placeholder: 'Pilih dealer...'
+                });
+            }
+            $el.data('kendoComboBox').setDataSource(data);
+            if (data.length) $el.data('kendoComboBox').select(0);
+        });
+
+        /* Service Types */
+        apiCall(API_URL + '/servicetypes', 'GET', null, function (data) {
+            var $el = $('#fServiceType');
+            if (!$el.data('kendoComboBox')) {
+                $el.kendoComboBox({
+                    dataTextField: 'name',
+                    dataValueField: 'id',
+                    filter: 'contains',
+                    placeholder: 'Pilih jenis servis...',
+                    template: '#= data.name # <small class="muted">(Rp #= kendo.toString(data.estimatedCost, "N0") #)</small>'
+                });
+            }
+            $el.data('kendoComboBox').setDataSource(data);
+            if (data.length) $el.data('kendoComboBox').select(0);
+        });
+
+        /* Date */
+        var $d = $('#fDate');
+        if (!$d.data('kendoDatePicker')) {
+            $d.kendoDatePicker({ format: 'dd MMM yyyy', min: new Date() });
+        }
+
+        /* Time */
+        var $t = $('#fTime');
+        if (!$t.data('kendoDropDownList')) {
+            $t.kendoDropDownList({
+                dataSource: ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'],
+                value: '09:00'
+            });
+        }
+    }
+
+    function onCustomerChange() {
+        var cid = $('#fCustomer').data('kendoComboBox').value();
+        if (!cid) return;
+        apiCall(API_URL + '/vehicles', 'GET', null, function (allVehicles) {
+            masterVehicles = allVehicles.filter(function (v) { return v.customerId == cid; });
+            var $el = $('#fVehicle');
+            if (!$el.data('kendoComboBox')) {
+                $el.kendoComboBox({
+                    dataTextField: 'licensePlate',
+                    dataValueField: 'id',
+                    template: '#= data.licensePlate # <small class="muted">· #= data.vehicleModelName #</small>'
+                });
+            }
+            $el.data('kendoComboBox').setDataSource(masterVehicles);
+            if (masterVehicles.length) $el.data('kendoComboBox').select(0);
+        });
+    }
+
+    function submitBooking() {
+        var data = {
+            customerId:    $('#fCustomer').data('kendoComboBox').value(),
+            vehicleId:     $('#fVehicle').data('kendoComboBox').value(),
+            dealerId:      $('#fDealer').data('kendoComboBox').value(),
+            serviceTypeId: $('#fServiceType').data('kendoComboBox').value(),
+            bookingDate:   kendo.toString($('#fDate').data('kendoDatePicker').value(), 'yyyy-MM-dd'),
+            bookingTime:   $('#fTime').data('kendoDropDownList').value() + ':00',
+            kmAtService:   $('#fKm').val() ? parseInt($('#fKm').val()) : null,
+            complaintNotes: $('#fComplaint').val()
+        };
+
+        if (!data.customerId || !data.vehicleId || !data.dealerId || !data.serviceTypeId) {
+            showToast('error', 'Lengkapi semua field terlebih dahulu');
+            return false;
+        }
+
+        apiCall(API_URL + '/bookings', 'POST', data, function (res) {
+            showToast('success', 'Booking ' + res.bookingCode + ' berhasil dibuat');
+            ds.read();
+        }, function (xhr) {
+            showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal membuat booking');
+        });
+
+        return false; /* jangan auto close */
+    }
+});
+</script>
+
+<style>
+    .link-detail { color: var(--mi-red); font-weight: 700; }
+    .link-detail:hover { text-decoration: underline; }
+    .muted { color: #9ca3af; }
+</style>
+</body>
+</html>

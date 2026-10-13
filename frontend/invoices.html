@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invoice — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Status Pembayaran</label>
+        <input id="filterStatus" style="width:200px;">
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+    </div>
+    <div id="gridInvoices"></div>
+</div>
+
+<!-- Dialog Payment -->
+<div id="dlgPay">
+    <div class="form-group">
+        <label>Nomor Invoice</label>
+        <input id="pNumber" readonly style="background:#f9fafc;">
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Total Tagihan</label>
+            <input id="pTotal" readonly style="background:#f9fafc;">
+        </div>
+        <div class="form-group">
+            <label>Sisa Tagihan</label>
+            <input id="pRemaining" readonly style="background:#fff7ed;color:#c2410c;font-weight:700;">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Jumlah Bayar (Rp)</label>
+            <input id="pAmount" type="number" min="0">
+        </div>
+        <div class="form-group">
+            <label>Metode Pembayaran</label>
+            <input id="pMethod">
+        </div>
+    </div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('invoices', 'Daftar Invoice', 'Kelola tagihan & pembayaran servis');
+
+    var currentInvoice = null;
+
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                var status = $('#filterStatus').data('kendoDropDownList')?.value() || '';
+                var url = API_URL + '/invoices' + (status ? '?status=' + status : '');
+                apiCall(url, 'GET', null, function (data) { opts.success(data); });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    $('#gridInvoices').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'invoiceNumber', title: 'No Invoice', width: 190,
+              template: '<strong>#= invoiceNumber #</strong>' },
+            { field: 'customerName', title: 'Customer', width: 200 },
+            { field: 'subtotal', title: 'Subtotal', width: 140,
+              template: 'Rp #= subtotal.toLocaleString("id-ID") #' },
+            { field: 'taxAmount', title: 'PPN 11%', width: 130,
+              template: 'Rp #= taxAmount.toLocaleString("id-ID") #' },
+            { field: 'totalAmount', title: 'Total', width: 160,
+              template: '<strong>Rp #= totalAmount.toLocaleString("id-ID") #</strong>' },
+            { field: 'paidAmount', title: 'Dibayar', width: 150,
+              template: function (d) {
+                  var color = d.paidAmount > 0 ? '#16a34a' : '#9ca3af';
+                  return '<span style="color:' + color + ';font-weight:600;">Rp ' + d.paidAmount.toLocaleString('id-ID') + '</span>';
+              }
+            },
+            { field: 'paymentStatus', title: 'Status', width: 130,
+              template: function (d) {
+                  return '<span class="badge badge-' + d.paymentStatus.toLowerCase() + '">' + d.paymentStatus + '</span>';
+              }
+            },
+            { field: 'dueDate', title: 'Jatuh Tempo', width: 130,
+              template: '#= dueDate ? kendo.toString(kendo.parseDate(dueDate), "dd MMM yyyy") : "-" #' },
+            { title: 'Aksi', width: 220, filterable: false, sortable: false,
+                template: function (d) {
+                    var html = '';
+                    
+                    // Tombol Cetak PDF — selalu ada
+                    html += '<button class="btn btn-secondary btn-sm" onclick="downloadPdf(' + d.id + ')" style="margin-right:4px;">' +
+                            '<span class="k-icon k-i-file-pdf"></span> PDF</button>';
+                    
+                    // Tombol Bayar — hanya kalau belum lunas
+                    if (d.paymentStatus !== 'Paid') {
+                        html += '<button class="btn btn-primary btn-sm" onclick="openPay(' + d.id + ')">' +
+                                '<span class="k-icon k-i-dollar"></span> Bayar</button>';
+                    } else {
+                        html += '<span style="color:#16a34a;font-weight:600;font-size:11px;">✓ LUNAS</span>';
+                    }
+                    
+                    return html;
+                }
+            }
+        ]
+    }));
+
+    $('#filterStatus').kendoDropDownList({
+        dataSource: [
+            { text: 'Semua Status', value: '' },
+            { text: 'Belum Dibayar (Unpaid)', value: 'Unpaid' },
+            { text: 'Bayar Sebagian (Partial)', value: 'Partial' },
+            { text: 'Sudah Lunas (Paid)', value: 'Paid' }
+        ],
+        dataTextField: 'text',
+        dataValueField: 'value',
+        value: '',
+        change: function () { ds.read(); }
+    });
+
+    $('#btnReset').on('click', function () {
+        $('#filterStatus').data('kendoDropDownList').value('');
+        ds.read();
+    });
+
+    /* Payment dialog */
+    var dlgPay = $('#dlgPay').kendoDialog({
+        title: 'Pembayaran Invoice',
+        width: 540,
+        modal: true,
+        visible: false,
+        actions: [
+            { text: 'Batal' },
+            { text: 'Konfirmasi Pembayaran', primary: true, action: submitPayment }
+        ]
+    }).data('kendoDialog');
+
+    window.openPay = function (id) {
+        apiCall(API_URL + '/invoices/' + id, 'GET', null, function (inv) {
+            currentInvoice = inv;
+            $('#pNumber').val(inv.invoiceNumber);
+            $('#pTotal').val(formatRupiah(inv.totalAmount));
+            $('#pRemaining').val(formatRupiah(inv.totalAmount - inv.paidAmount));
+
+            /* Numeric input */
+            $('#pAmount').data('kendoNumericTextBox')?.destroy();
+            $('#pAmount').kendoNumericTextBox({
+                format: 'n0',
+                min: 0,
+                decimals: 0,
+                value: inv.totalAmount - inv.paidAmount
+            });
+
+            /* Payment method dropdown */
+            $('#pMethod').data('kendoDropDownList')?.destroy();
+            $('#pMethod').kendoDropDownList({
+                dataSource: ['Cash', 'Transfer', 'Card'],
+                value: 'Transfer'
+            });
+
+            dlgPay.open();
+        });
+    };
+
+    window.downloadPdf = function (id) {
+        // Buat URL dengan token di query (karena <a download> tidak bisa kirim header)
+        // Alternatif: fetch via AJAX → buat blob → download
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', API_URL + '/invoices/' + id + '/pdf', true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
+        xhr.responseType = 'blob';
+        
+        xhr.onload = function () {
+            if (this.status === 200) {
+                var blob = new Blob([this.response], { type: 'application/pdf' });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                
+                // Ambil nama file dari header Content-Disposition
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+                var filename = 'Invoice.pdf';
+                if (disposition && disposition.indexOf('filename=') !== -1) {
+                    filename = disposition.split('filename=')[1].replace(/"/g, '').trim();
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showToast('success', 'PDF berhasil diunduh');
+            } else {
+                showToast('error', 'Gagal mengunduh PDF');
+            }
+        };
+        
+        xhr.onerror = function () {
+            showToast('error', 'Network error saat mengunduh PDF');
+        };
+        
+        xhr.send();
+    };
+
+    function submitPayment() {
+        var amount = $('#pAmount').data('kendoNumericTextBox').value();
+        var method = $('#pMethod').data('kendoDropDownList').value();
+
+        if (!amount || amount <= 0) { showToast('error', 'Jumlah bayar tidak valid'); return false; }
+
+        apiCall(API_URL + '/invoices/' + currentInvoice.id + '/pay', 'POST', {
+            paidAmount: amount,
+            paymentMethod: method
+        }, function (res) {
+            var sisa = res.remaining;
+            var type = sisa <= 0 ? 'success' : 'info';
+            showToast(type, sisa <= 0
+                ? 'Pembayaran lunas! Sisa: Rp 0'
+                : 'Pembayaran diterima. Sisa: ' + formatRupiah(sisa));
+            ds.read();
+        }, function (xhr) {
+            showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Pembayaran gagal');
+        });
+        return true;
+    }
+});
+</script>
+</body>
+</html>

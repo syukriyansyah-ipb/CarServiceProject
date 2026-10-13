@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+    <div class="login-box">
+        <div class="login-brand">
+            <div class="login-brand-mark">
+                <span class="mark-diamond d1"></span>
+                <span class="mark-diamond d2"></span>
+                <span class="mark-diamond d3"></span>
+            </div>
+            <h1>MITSUBISHI</h1>
+            <div class="tagline">Service Booking System</div>
+        </div>
+
+        <form class="login-form" id="loginForm" autocomplete="off">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" value="admin@mitsubishi.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" value="Admin123!" required>
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">MASUK</button>
+            <div class="login-error" id="loginError"></div>
+        </form>
+
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid #eef0f5;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;font-weight:700;margin-bottom:10px;">
+                Demo Accounts
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+                <button type="button" class="demo-btn" data-email="admin@mitsubishi.com" data-pass="Admin123!">
+                    <strong>SuperAdmin</strong> — Head Office
+                </button>
+                <button type="button" class="demo-btn" data-email="sa.jkt@mitsubishi.co.id" data-pass="Password123!">
+                    <strong>Service Advisor</strong> — Jakarta Selatan
+                </button>
+                <button type="button" class="demo-btn" data-email="sa.bdg@mitsubishi.co.id" data-pass="Password123!">
+                    <strong>Service Advisor</strong> — Bandung
+                </button>
+            </div>
+        </div>
+
+        <div class="login-footer">© 2026 Mitsubishi Service System · v1.0</div>
+    </div>
+
+    <script>
+        $(function () {
+            var API = 'http://localhost:5017/api';
+
+            /* Quick-fill dari demo account */
+            $('.demo-btn').on('click', function () {
+                $('#email').val($(this).data('email'));
+                $('#password').val($(this).data('pass'));
+            });
+
+            $('#loginForm').on('submit', function (e) {
+                e.preventDefault();
+                var $btn = $('#btnLogin');
+                var $err = $('#loginError');
+                $err.hide();
+                $btn.prop('disabled', true).text('MEMPROSES...');
+
+                $.ajax({
+                    url: API + '/auth/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email: $('#email').val().trim(),
+                        password: $('#password').val()
+                    })
+                })
+                .done(function (res) {
+                    localStorage.setItem('token',      res.token);
+                    localStorage.setItem('fullName',   res.fullName);
+                    localStorage.setItem('role',       res.role);
+                    localStorage.setItem('dealerId',   res.dealerId   || '');
+                    localStorage.setItem('dealerName', res.dealerName || '');
+                    window.location.href = 'dashboard.html';
+                })
+                .fail(function (xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Login gagal. Cek email & password.';
+                    $err.text(msg).show();
+                    $btn.prop('disabled', false).text('MASUK');
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .demo-btn {
+            text-align: left;
+            padding: 8px 12px;
+            background: #f9fafc;
+            border: 1px solid #eef0f5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            color: #4a5268;
+            transition: all 0.15s;
+        }
+        .demo-btn:hover {
+            background: #fff;
+            border-color: #E60012;
+            color: #E60012;
+        }
+        .demo-btn strong { color: #14161f; margin-right: 4px; }
+        .demo-btn:hover strong { color: #E60012; }
+    </style>
+</body>
+</html>

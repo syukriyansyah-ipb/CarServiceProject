@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Cari</label>
+        <input id="searchCustomer" placeholder="Nama / kode customer..." style="width:280px;">
+        <button class="btn btn-primary" id="btnSearch">
+            <span class="k-icon k-i-search"></span> Cari
+        </button>
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+    </div>
+    <div id="gridCustomers"></div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('customers', 'Daftar Customer', 'Data pelanggan terdaftar');
+
+    var allData = [];
+
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                apiCall(API_URL + '/customers', 'GET', null, function (data) {
+                    allData = data;
+                    applyFilter(opts);
+                });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    function applyFilter(opts) {
+        var q = $('#searchCustomer').val().trim().toLowerCase();
+        var filtered = !q ? allData : allData.filter(function (c) {
+            return (c.fullName + ' ' + c.customerCode + ' ' + (c.phone || '')).toLowerCase().indexOf(q) !== -1;
+        });
+        opts.success(filtered);
+    }
+
+    $('#gridCustomers').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'customerCode', title: 'Kode', width: 160 },
+            { field: 'fullName', title: 'Nama', width: 220 },
+            { field: 'phone', title: 'Telepon', width: 150 },
+            { field: 'email', title: 'Email', width: 240 },
+            { field: 'city', title: 'Kota', width: 140 },
+            { field: 'createdAt', title: 'Terdaftar', width: 160,
+              template: '#= kendo.toString(kendo.parseDate(createdAt), "dd MMM yyyy") #' }
+        ]
+    }));
+
+    $('#btnSearch').on('click', function () { ds.read(); });
+    $('#btnReset').on('click', function () { $('#searchCustomer').val(''); ds.read(); });
+    $('#searchCustomer').on('keypress', function (e) { if (e.which === 13) ds.read(); });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Detail Booking — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <a href="bookings.html" style="color:var(--mi-red);font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;">
+        <span class="k-icon k-i-arrow-left"></span> Kembali ke daftar booking
+    </a>
+    <div id="detailContent" style="margin-top:16px;">
+        <div class="card" style="text-align:center;padding:40px;">Memuat...</div>
+    </div>
+</div>
+
+<!-- Dialog Assign Mekanik -->
+<div id="dlgAssign">
+    <div class="form-group">
+        <label>Pilih Mekanik</label>
+        <input id="aMechanic">
+    </div>
+</div>
+
+<!-- Dialog Complete -->
+<div id="dlgComplete">
+    <div class="form-row">
+        <div class="form-group">
+            <label>KM Saat Servis</label>
+            <input id="cKm" type="number" min="0">
+        </div>
+        <div class="form-group">
+            <label>Biaya Aktual (Rp)</label>
+            <input id="cCost" type="number" min="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Catatan Service Advisor</label>
+        <textarea id="cNotes" rows="4" style="width:100%;padding:10px 12px;border:1px solid #d5dae6;border-radius:8px;font-family:inherit;font-size:13.5px;resize:vertical;" placeholder="Temuan teknisi, rekomendasi servis berikutnya..."></textarea>
+    </div>
+    <div class="info-banner" style="margin-top:8px;">
+        <span class="k-icon k-i-info-circle"></span>
+        <div>Invoice akan otomatis dibuat dengan PPN 11% setelah servis selesai.</div>
+    </div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('bookings', 'Detail Booking', 'Informasi lengkap dan workflow booking');
+
+    var bookingId = new URLSearchParams(location.search).get('id');
+    var B = null;
+
+    if (!bookingId) {
+        $('#detailContent').html('<div class="card" style="color:#dc2626;">ID booking tidak ditemukan.</div>');
+        return;
+    }
+
+    load();
+
+    function load() {
+        apiCall(API_URL + '/bookings/' + bookingId, 'GET', null, function (data) {
+            B = data;
+            render();
+        });
+    }
+
+    function render() {
+        var statusCls = B.status.toLowerCase();
+        var actionHtml = buildActions();
+
+        $('#detailContent').html(
+            /* Header */
+            '<div class="card">' +
+                '<div class="detail-header">' +
+                    '<div>' +
+                        '<h2 class="detail-code">' + B.bookingCode + '</h2>' +
+                        '<div class="detail-meta">Dibuat ' + formatDateTime(B.createdAt) + '</div>' +
+                    '</div>' +
+                    '<span class="badge badge-' + statusCls + '" style="font-size:13px;padding:6px 16px;">' + B.status + '</span>' +
+                '</div>' +
+            '</div>' +
+
+            /* Action bar */
+            (actionHtml ? '<div class="card"><div class="action-bar">' + actionHtml + '</div></div>' : '') +
+
+            /* Grid info */
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">' +
+
+                '<div class="card">' +
+                    '<h3 class="card-title"><span class="k-icon k-i-calendar"></span> Jadwal Servis</h3>' +
+                    '<div class="detail-rows">' +
+                        row('Tanggal', formatDate(B.bookingDate)) +
+                        row('Jam', B.bookingTime.substring(0,5)) +
+                        row('Dealer', B.dealerName) +
+                        row('Jenis Servis', B.serviceTypeName) +
+                        row('Mekanik', B.mechanicName || '<span class="muted">Belum di-assign</span>') +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="card">' +
+                    '<h3 class="card-title"><span class="k-icon k-i-user"></span> Customer & Kendaraan</h3>' +
+                    '<div class="detail-rows">' +
+                        row('Customer', B.customerName) +
+                        row('Telepon', B.customerPhone) +
+                        row('Kendaraan', B.licensePlate) +
+                        row('Model', B.vehicleModelName) +
+                    '</div>' +
+                '</div>' +
+
+            '</div>' +
+
+            '<div class="card">' +
+                '<h3 class="card-title"><span class="k-icon k-i-file"></span> Detail & Keluhan</h3>' +
+                '<div class="detail-rows">' +
+                    row('Keluhan Customer', B.complaintNotes || '-') +
+                    row('Catatan Customer', B.customerNotes || '-') +
+                    row('KM Saat Servis', B.kmAtService ? B.kmAtService.toLocaleString('id-ID') + ' KM' : '-') +
+                    row('Estimasi Biaya', '<strong>' + formatRupiah(B.estimatedCost) + '</strong>') +
+                    row('Biaya Aktual', B.actualCost ? '<strong style="color:#16a34a;">' + formatRupiah(B.actualCost) + '</strong>' : '-') +
+                    row('Catatan Advisor', B.advisorNotes || '-') +
+                '</div>' +
+            '</div>'
+        );
+
+        bindActions();
+    }
+
+    function row(k, v) {
+        return '<div class="detail-row">' +
+            '<span class="k">' + k + '</span>' +
+            '<span class="v">' + v + '</span>' +
+            '</div>';
+    }
+
+    function buildActions() {
+        var btns = [];
+        if (B.status === 'Pending') {
+            btns.push('<button class="btn btn-primary" data-act="confirm"><span class="k-icon k-i-check"></span> Konfirmasi Booking</button>');
+            btns.push('<button class="btn btn-danger" data-act="cancel"><span class="k-icon k-i-cancel"></span> Batalkan</button>');
+        } else if (B.status === 'Confirmed') {
+            if (!B.mechanicId) {
+                btns.push('<button class="btn btn-warning" data-act="assign"><span class="k-icon k-i-user"></span> Assign Mekanik</button>');
+            } else {
+                btns.push('<button class="btn btn-secondary" data-act="assign"><span class="k-icon k-i-user"></span> Ganti Mekanik</button>');
+                btns.push('<button class="btn btn-success" data-act="start"><span class="k-icon k-i-play"></span> Mulai Servis</button>');
+            }
+            btns.push('<button class="btn btn-danger" data-act="cancel"><span class="k-icon k-i-cancel"></span> Batalkan</button>');
+        } else if (B.status === 'InProgress') {
+            btns.push('<button class="btn btn-success" data-act="complete"><span class="k-icon k-i-check-circle"></span> Selesaikan Servis</button>');
+        } else if (B.status === 'Completed') {
+            btns.push('<div class="info-banner" style="background:#ecfdf5;border-color:#16a34a;color:#065f46;"><span class="k-icon k-i-check-circle"></span> Servis selesai. ServiceHistory & Invoice sudah dibuat otomatis.</div>');
+        } else if (B.status === 'Cancelled') {
+            btns.push('<div class="info-banner" style="background:#fef2f2;border-color:#dc2626;color:#991b1b;"><span class="k-icon k-i-cancel"></span> Booking ini telah dibatalkan.</div>');
+        }
+        return btns.join('');
+    }
+
+    function bindActions() {
+        $('[data-act]').on('click', function () {
+            var act = $(this).data('act');
+            if (act === 'confirm')  doConfirm();
+            if (act === 'cancel')   doCancel();
+            if (act === 'assign')   openAssign();
+            if (act === 'start')    doStart();
+            if (act === 'complete') openComplete();
+        });
+    }
+
+    function doConfirm() {
+        kendo.confirm('Konfirmasi booking ini?').then(function () {
+            apiCall(API_URL + '/bookings/' + bookingId + '/confirm', 'PUT', null, function () {
+                showToast('success', 'Booking berhasil dikonfirmasi');
+                load();
+            });
+        });
+    }
+
+    function doStart() {
+        kendo.confirm('Mulai servis sekarang?').then(function () {
+            apiCall(API_URL + '/bookings/' + bookingId + '/start', 'PUT', null, function () {
+                showToast('success', 'Servis dimulai');
+                load();
+            });
+        });
+    }
+
+    function doCancel() {
+        kendo.confirm('Batalkan booking ini? Tindakan ini tidak dapat diurungkan.').then(function () {
+            apiCall(API_URL + '/bookings/' + bookingId, 'DELETE', null, function () {
+                showToast('info', 'Booking dibatalkan');
+                load();
+            });
+        });
+    }
+
+    /* ---------- Assign ---------- */
+    var dlgAssign = $('#dlgAssign').kendoDialog({
+        title: 'Assign Mekanik',
+        width: 500,
+        modal: true,
+        visible: false,
+        actions: [
+            { text: 'Batal' },
+            { text: 'Assign Sekarang', primary: true, action: submitAssign }
+        ]
+    }).data('kendoDialog');
+
+    function openAssign() {
+        apiCall(API_URL + '/mechanics?dealerId=' + B.dealerId, 'GET', null, function (data) {
+            var $el = $('#aMechanic');
+            if (!$el.data('kendoComboBox')) {
+                $el.kendoComboBox({
+                    dataTextField: 'fullName',
+                    dataValueField: 'id',
+                    template: '#= data.fullName # <small style="color:#9ca3af;">· #= data.specialization || "-" #</small>',
+                    filter: 'contains'
+                });
+            }
+            $el.data('kendoComboBox').setDataSource(data);
+            if (data.length) $el.data('kendoComboBox').select(0);
+            dlgAssign.open();
+        });
+    }
+
+    function submitAssign() {
+        var mid = $('#aMechanic').data('kendoComboBox').value();
+        if (!mid) { showToast('error', 'Pilih mekanik terlebih dahulu'); return false; }
+        apiCall(API_URL + '/bookings/' + bookingId + '/assign-mechanic', 'PUT', { mechanicId: parseInt(mid) }, function () {
+            showToast('success', 'Mekanik berhasil di-assign');
+            load();
+        }, function (xhr) {
+            showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal assign mekanik');
+        });
+        return true;
+    }
+
+    /* ---------- Complete ---------- */
+    var dlgComplete = $('#dlgComplete').kendoDialog({
+        title: 'Selesaikan Servis',
+        width: 560,
+        modal: true,
+        visible: false,
+        actions: [
+            { text: 'Batal' },
+            { text: 'Selesaikan Servis', primary: true, action: submitComplete }
+        ]
+    }).data('kendoDialog');
+
+    function openComplete() {
+        $('#cKm').data('kendoNumericTextBox')?.destroy();
+        $('#cKm').val(B.kmAtService || '');
+        $('#cCost').data('kendoNumericTextBox')?.destroy();
+        $('#cCost').val(B.estimatedCost || '');
+        $('#cNotes').val('');
+
+        $('#cKm').kendoNumericTextBox({ format: 'n0', min: 0, decimals: 0 });
+        $('#cCost').kendoNumericTextBox({ format: 'n0', min: 0, decimals: 0 });
+
+        dlgComplete.open();
+    }
+
+    function submitComplete() {
+        var data = {
+            kmAtService: parseInt($('#cKm').data('kendoNumericTextBox').value()),
+            actualCost:  parseFloat($('#cCost').data('kendoNumericTextBox').value()),
+            advisorNotes: $('#cNotes').val()
+        };
+        if (!data.kmAtService || !data.actualCost) {
+            showToast('error', 'Isi KM dan biaya aktual terlebih dahulu');
+            return false;
+        }
+        apiCall(API_URL + '/bookings/' + bookingId + '/complete', 'PUT', data, function (res) {
+            showToast('success',
+                'Servis selesai! Invoice ' + res.invoiceNumber +
+                ' dibuat otomatis (Total: ' + formatRupiah(res.totalAmount) + ')');
+            load();
+        }, function (xhr) {
+            showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal menyelesaikan servis');
+        });
+        return true;
+    }
+});
+</script>
+</body>
+</html>

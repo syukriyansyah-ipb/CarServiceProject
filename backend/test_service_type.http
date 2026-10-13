@@ -1,0 +1,68 @@
+### Login (fresh)
+POST http://localhost:5017/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@mitsubishi.com",
+  "password": "Admin123!"
+}
+
+
+### Create ServiceType - Servis Berkala 10K
+POST http://localhost:5017/api/servicetypes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjNkYTA5NTJhLTJiOTItNGE5MS1hM2Y3LWQ5YjkwOWY5NTUxNyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2Njk3ODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.8d4hv3KTc4ljhmOmpCkqQeuPdJngo4HYXA1sg_SXx4k
+Content-Type: application/json
+
+{
+  "code": "PERIODIC-10K",
+  "name": "Servis Berkala 10.000 KM",
+  "description": "Ganti oli, filter oli, cek rem, cek kelistrikan",
+  "category": "Periodic",
+  "estimatedDuration": 90,
+  "estimatedCost": 750000
+}
+
+### Create ServiceType - Servis Berkala 20K
+POST http://localhost:5017/api/servicetypes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjNkYTA5NTJhLTJiOTItNGE5MS1hM2Y3LWQ5YjkwOWY5NTUxNyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2Njk3ODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.8d4hv3KTc4ljhmOmpCkqQeuPdJngo4HYXA1sg_SXx4k
+Content-Type: application/json
+
+{
+  "code": "PERIODIC-20K",
+  "name": "Servis Berkala 20.000 KM",
+  "description": "Servis 10K + ganti filter udara + tune up",
+  "category": "Periodic",
+  "estimatedDuration": 120,
+  "estimatedCost": 1200000
+}
+
+### Create ServiceType - Perbaikan Rem
+POST http://localhost:5017/api/servicetypes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjNkYTA5NTJhLTJiOTItNGE5MS1hM2Y3LWQ5YjkwOWY5NTUxNyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2Njk3ODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.8d4hv3KTc4ljhmOmpCkqQeuPdJngo4HYXA1sg_SXx4k
+Content-Type: application/json
+
+{
+  "code": "REPAIR-BRAKE",
+  "name": "Perbaikan Sistem Rem",
+  "description": "Ganti kampas rem, bleeding, cek minyak rem",
+  "category": "Repair",
+  "estimatedDuration": 180,
+  "estimatedCost": 850000
+}
+
+### Create ServiceType - Servis Darurat
+POST http://localhost:5017/api/servicetypes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBtaXRzdWJpc2hpLmNvbSIsImp0aSI6IjNkYTA5NTJhLTJiOTItNGE5MS1hM2Y3LWQ5YjkwOWY5NTUxNyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiBNaXRzdWJpc2hpIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3OTE2Njk3ODgsImlzcyI6Ik1pdHN1YmlzaGlBcGkiLCJhdWQiOiJNaXRzdWJpc2hpQXBpVXNlcnMifQ.8d4hv3KTc4ljhmOmpCkqQeuPdJngo4HYXA1sg_SXx4k
+Content-Type: application/json
+
+{
+  "code": "EMERGENCY-TOW",
+  "name": "Layanan Darurat & Towing",
+  "description": "Layanan panggilan darurat di jalan",
+  "category": "Emergency",
+  "estimatedDuration": 240,
+  "estimatedCost": 500000
+}
+
+### Get all service types (harus ada 4)
+GET http://localhost:5017/api/servicetypes

@@ -1,0 +1,6 @@
+@MitsubishiApi_HostAddress = http://localhost:5017
+
+GET {{MitsubishiApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

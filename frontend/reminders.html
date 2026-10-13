@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reminder Servis — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <!-- Stat cards di atas -->
+    <div class="stats-row" id="statsRow">
+        <div class="stat-card stat-pending">
+            <div class="stat-icon"><span class="k-icon k-i-clock"></span></div>
+            <div class="stat-info">
+                <div class="stat-value" id="statPending">-</div>
+                <div class="stat-label">Menunggu Dikirim</div>
+            </div>
+        </div>
+        <div class="stat-card stat-sent">
+            <div class="stat-icon"><span class="k-icon k-i-email"></span></div>
+            <div class="stat-info">
+                <div class="stat-value" id="statSent">-</div>
+                <div class="stat-label">Terkirim</div>
+            </div>
+        </div>
+        <div class="stat-card stat-completed">
+            <div class="stat-icon"><span class="k-icon k-i-check-circle"></span></div>
+            <div class="stat-info">
+                <div class="stat-value" id="statCompleted">-</div>
+                <div class="stat-label">Selesai</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <label>Status</label>
+        <input id="filterStatus" style="width:200px;">
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+        <div class="toolbar-spacer"></div>
+        <button class="btn btn-primary" id="btnRunNow">
+            <span class="k-icon k-i-refresh"></span> Jalankan Job Manual
+        </button>
+    </div>
+
+    <!-- Grid -->
+    <div id="gridReminders"></div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('reminders', 'Reminder Servis', 'Notifikasi otomatis untuk servis berkala kendaraan');
+
+    /* ===== STATUS ROLES ===== */
+    var STATUSES = [
+        { text: 'Semua Status', value: '' },
+        { text: 'Pending (Belum Dikirim)', value: 'Pending' },
+        { text: 'Sent (Sudah Dikirim)', value: 'Sent' },
+        { text: 'Completed (Selesai Servis)', value: 'Completed' }
+    ];
+
+    /* ===== GRID ===== */
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                var status = $('#filterStatus').data('kendoDropDownList')?.value() || '';
+                var url = API_URL + '/reminders' + (status ? '?status=' + status : '');
+                apiCall(url, 'GET', null, function (data) { opts.success(data); });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    $('#gridReminders').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'id', title: 'ID', width: 60 },
+            { field: 'licensePlate', title: 'Kendaraan', width: 220,
+              template: function (d) {
+                  return '<strong>' + d.licensePlate + '</strong> <span class="muted">· ' + d.vehicleModelName + '</span>';
+              }
+            },
+            { field: 'customerName', title: 'Customer', width: 200,
+              template: function (d) {
+                  return d.customerName + '<br><small class="muted">' + d.customerPhone + '</small>';
+              }
+            },
+            { field: 'dealerName', title: 'Dealer', width: 200 },
+            { field: 'reminderType', title: 'Tipe', width: 120,
+              template: function (d) {
+                  var label = d.reminderType === 'Both' ? 'KM & Tanggal'
+                             : d.reminderType === 'KmBased' ? 'KM'
+                             : 'Tanggal';
+                  return '<span class="badge badge-confirmed">' + label + '</span>';
+              }
+            },
+            { field: 'dueDate', title: 'Jadwal Berikutnya', width: 180,
+              template: function (d) {
+                  var parts = [];
+                  if (d.dueDate) parts.push('📅 ' + kendo.toString(kendo.parseDate(d.dueDate), 'dd MMM yyyy'));
+                  if (d.dueKm) parts.push('🛣️ ' + d.dueKm.toLocaleString('id-ID') + ' KM');
+                  return parts.join('<br>') || '-';
+              }
+            },
+            { field: 'status', title: 'Status', width: 130,
+              template: function (d) {
+                  var cls = 'badge-' + d.status.toLowerCase();
+                  var label = d.status === 'Pending' ? 'Menunggu'
+                            : d.status === 'Sent' ? 'Terkirim'
+                            : d.status === 'Completed' ? 'Selesai'
+                            : d.status;
+                  return '<span class="badge ' + cls + '">' + label + '</span>';
+              }
+            },
+            { field: 'sentAt', title: 'Dikirim Pada', width: 160,
+              template: function (d) {
+                  return d.sentAt ? kendo.toString(kendo.parseDate(d.sentAt), 'dd MMM yyyy HH:mm') : '<span class="muted">—</span>';
+              }
+            },
+            { title: 'Aksi', width: 130, filterable: false, sortable: false,
+              template: function (d) {
+                  if (d.status === 'Completed') return '<span class="muted">—</span>';
+                  return '<button class="btn btn-success btn-sm" onclick="completeReminder(' + d.id + ')">' +
+                      '<span class="k-icon k-i-check"></span> Tandai Selesai</button>';
+              }
+            }
+        ]
+    }));
+
+    /* Filter status */
+    $('#filterStatus').kendoDropDownList({
+        dataSource: STATUSES,
+        dataTextField: 'text',
+        dataValueField: 'value',
+        value: '',
+        change: function () { ds.read(); }
+    });
+
+    $('#btnReset').on('click', function () {
+        $('#filterStatus').data('kendoDropDownList').value('');
+        ds.read();
+    });
+
+    /* ===== RUN NOW ===== */
+    $('#btnRunNow').on('click', function () {
+        kendo.confirm('Jalankan job reminder manual sekarang?<br><small>Ini akan scan ServiceHistory dan generate reminder baru.</small>')
+            .then(function () {
+                var $btn = $('#btnRunNow');
+                $btn.prop('disabled', true).html('<span class="k-icon k-i-loading"></span> Menjalankan...');
+
+                apiCall(API_URL + '/reminders/run-now', 'POST', null, function () {
+                    showToast('success', 'Job reminder selesai dijalankan');
+                    loadStats();
+                    ds.read();
+                }, function (xhr) {
+                    showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Gagal menjalankan job');
+                }).always(function () {
+                    $btn.prop('disabled', false).html('<span class="k-icon k-i-refresh"></span> Jalankan Job Manual');
+                });
+            });
+    });
+
+    /* ===== LOAD STATS ===== */
+    function loadStats() {
+        apiCall(API_URL + '/reminders/stats', 'GET', null, function (stats) {
+            $('#statPending').text(stats.pending);
+            $('#statSent').text(stats.sent);
+            $('#statCompleted').text(stats.completed);
+        });
+    }
+
+    loadStats();
+
+    /* ===== COMPLETE REMINDER ===== */
+    window.completeReminder = function (id) {
+        kendo.confirm('Tandai reminder ini sebagai selesai?<br><small>Biasanya dilakukan setelah customer datang servis.</small>')
+            .then(function () {
+                apiCall(API_URL + '/reminders/' + id + '/complete', 'PUT', null, function () {
+                    showToast('success', 'Reminder ditandai selesai');
+                    loadStats();
+                    ds.read();
+                });
+            });
+    };
+});
+</script>
+
+<style>
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border: 1px solid #eef0f5;
+        box-shadow: 0 1px 3px rgba(20,30,60,0.04);
+    }
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+    .stat-pending .stat-icon { background: #fef3c7; color: #92400e; }
+    .stat-sent .stat-icon { background: #dbeafe; color: #1e40af; }
+    .stat-completed .stat-icon { background: #d1fae5; color: #065f46; }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1a1d29;
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 6px;
+        font-weight: 500;
+    }
+
+    .muted { color: #9ca3af; font-size: 12px; }
+
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr; }
+    }
+</style>
+</body>
+</html>

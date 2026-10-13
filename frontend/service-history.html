@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Riwayat Servis — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+    <div class="toolbar">
+        <label>Dealer</label>
+        <input id="filterDealer" style="width:240px;">
+        <button class="btn btn-secondary" id="btnReset">
+            <span class="k-icon k-i-reload"></span> Reset
+        </button>
+    </div>
+    <div id="gridHistory"></div>
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('history', 'Riwayat Servis', 'Catatan servis kendaraan yang telah selesai');
+
+    var ds = new kendo.data.DataSource({
+        transport: {
+            read: function (opts) {
+                var dealerId = $('#filterDealer').data('kendoComboBox')?.value() || '';
+                var url = API_URL + '/servicehistories' + (dealerId ? '?dealerId=' + dealerId : '');
+                apiCall(url, 'GET', null, function (data) { opts.success(data); });
+            }
+        },
+        pageSize: 10,
+        schema: { model: { id: 'id' } }
+    });
+
+    $('#gridHistory').kendoGrid($.extend(defaultGridOptions(), {
+        dataSource: ds,
+        columns: [
+            { field: 'id', title: 'ID', width: 60 },
+            { field: 'bookingCode', title: 'Kode Booking', width: 170 },
+            { field: 'licensePlate', title: 'Kendaraan', width: 220,
+              template: '#= licensePlate # <span class="muted">· #= vehicleModelName #</span>' },
+            { field: 'dealerName', title: 'Dealer', width: 200 },
+            { field: 'mechanicName', title: 'Mekanik', width: 170,
+              template: '#= mechanicName || "-" #' },
+            { field: 'serviceDate', title: 'Tanggal Servis', width: 140,
+              template: '#= kendo.toString(kendo.parseDate(serviceDate), "dd MMM yyyy") #' },
+            { field: 'kmAtService', title: 'KM', width: 110,
+              template: '#= kmAtService.toLocaleString("id-ID") #' },
+            { field: 'totalCost', title: 'Biaya', width: 160,
+              template: '<strong>Rp #= totalCost.toLocaleString("id-ID") #</strong>' },
+            { field: 'nextServiceKm', title: 'Servis Berikutnya', width: 180,
+              template: '#= nextServiceKm ? nextServiceKm.toLocaleString("id-ID") + " KM" : "-" #' }
+        ]
+    }));
+
+    apiCall(API_URL + '/dealers', 'GET', null, function (dealers) {
+        $('#filterDealer').kendoComboBox({
+            dataTextField: 'name',
+            dataValueField: 'id',
+            dataSource: dealers,
+            filter: 'contains',
+            placeholder: 'Semua dealer...',
+            change: function () { ds.read(); }
+        });
+    });
+
+    $('#btnReset').on('click', function () {
+        var c = $('#filterDealer').data('kendoComboBox');
+        if (c) c.value('');
+        ds.read();
+    });
+});
+</script>
+
+<style>.muted { color: #9ca3af; }</style>
+</body>
+</html>

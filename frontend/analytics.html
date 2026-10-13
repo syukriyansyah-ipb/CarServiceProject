@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Analytics — Mitsubishi Service</title>
+    <script src="js/cdn.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="page-root">
+
+    <!-- ============ KPI CARDS ============ -->
+    <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-icon-red"><span class="k-icon k-i-calendar"></span></div>
+            <div class="kpi-content">
+                <div class="kpi-label">Total Booking</div>
+                <div class="kpi-value" id="kpiTotalBookings">—</div>
+                <div class="kpi-sub" id="kpiBookingSub">—</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-icon-green"><span class="k-icon k-i-dollar"></span></div>
+            <div class="kpi-content">
+                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-value" id="kpiTotalRevenue">—</div>
+                <div class="kpi-sub" id="kpiRevenueSub">—</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-icon-orange"><span class="k-icon k-i-clock"></span></div>
+            <div class="kpi-content">
+                <div class="kpi-label">Belum Dibayar</div>
+                <div class="kpi-value" id="kpiUnpaid">—</div>
+                <div class="kpi-sub" id="kpiUnpaidSub">—</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-icon-blue"><span class="k-icon k-i-user"></span></div>
+            <div class="kpi-content">
+                <div class="kpi-label">Customer</div>
+                <div class="kpi-value" id="kpiCustomers">—</div>
+                <div class="kpi-sub" id="kpiVehicleSub">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ CHART ROW 1 ============ -->
+    <div class="chart-row-2">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Booking Trend (30 Hari Terakhir)</h3>
+                <span class="chart-subtitle" id="trendSubtitle">—</span>
+            </div>
+            <div id="chartTrend" class="chart-body"></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Distribusi Status Booking</h3>
+            </div>
+            <div id="chartStatus" class="chart-body"></div>
+        </div>
+    </div>
+
+    <!-- ============ CHART ROW 2 ============ -->
+    <div class="chart-row-2">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Revenue per Dealer</h3>
+            </div>
+            <div id="chartDealer" class="chart-body"></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Top 5 Kendaraan Paling Sering Servis</h3>
+            </div>
+            <div id="chartVehicles" class="chart-body"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/layout.js"></script>
+<script>
+$(function () {
+    renderLayout('analytics', 'Analytics Dashboard', 'Insight performa servis dan revenue');
+
+    /* ============================================================
+       LOAD KPI CARDS
+       ============================================================ */
+    function loadSummary() {
+        apiCall(API_URL + '/analytics/summary', 'GET', null, function (s) {
+            $('#kpiTotalBookings').text(s.totalBookings.toLocaleString('id-ID'));
+            $('#kpiBookingSub').html(
+                '<span style="color:#16a34a;">' + s.completedBookings + ' selesai</span> · ' +
+                '<span style="color:#f59e0b;">' + s.pendingBookings + ' pending</span>'
+            );
+
+            $('#kpiTotalRevenue').text(formatRupiahShort(s.totalRevenue));
+            $('#kpiRevenueSub').html('Revenue terbayar');
+
+            $('#kpiUnpaid').text(formatRupiahShort(s.unpaidAmount));
+            $('#kpiUnpaidSub').html(
+                s.unpaidAmount > 0
+                    ? '<span style="color:#dc2626;">Perlu follow-up</span>'
+                    : '<span style="color:#16a34a;">Semua lunas</span>'
+            );
+
+            $('#kpiCustomers').text(s.totalCustomers.toLocaleString('id-ID'));
+            $('#kpiVehicleSub').html(s.totalVehicles + ' kendaraan terdaftar');
+        });
+    }
+
+    /* ============================================================
+       CHART 1: BOOKING TREND (LINE)
+       ============================================================ */
+    function loadTrendChart() {
+        apiCall(API_URL + '/analytics/booking-trend?days=30', 'GET', null, function (data) {
+            // Lengkapi tanggal yang kosong (isi 0)
+            var full = buildDateRange(30);
+            var map = {};
+            data.forEach(function (d) { map[d.date] = d; });
+
+            var series = full.map(function (date) {
+                var d = map[date] || { date: date, count: 0, revenue: 0 };
+                return {
+                    date: kendo.parseDate(date),
+                    count: d.count,
+                    revenue: d.revenue
+                };
+            });
+
+            var total = series.reduce(function (a, b) { return a + b.count; }, 0);
+            $('#trendSubtitle').text('Total ' + total + ' booking dalam 30 hari');
+
+            $('#chartTrend').kendoChart({
+                dataSource: { data: series },
+                height: 280,
+                theme: 'default',
+                chartArea: { background: 'transparent' },
+                seriesDefaults: {
+                    type: 'line',
+                    style: 'smooth',
+                    width: 3
+                },
+                series: [{
+                    field: 'count',
+                    name: 'Jumlah Booking',
+                    color: '#E60012',
+                    markers: {
+                        visible: true,
+                        size: 6,
+                        background: '#fff',
+                        border: { width: 2, color: '#E60012' }
+                    },
+                    tooltip: {
+                        visible: true,
+                        template: '#= kendo.toString(category, "dd MMM") #<br/><strong>#= value # booking</strong>'
+                    }
+                }],
+                categoryAxis: {
+                    field: 'date',
+                    type: 'date',
+                    baseUnit: 'days',
+                    labels: {
+                        dateFormats: { days: 'dd MMM' },
+                        step: 3,
+                        font: '11px Inter'
+                    },
+                    majorGridLines: { visible: false },
+                    line: { color: '#eef0f5' }
+                },
+                valueAxis: {
+                    labels: { font: '11px Inter', color: '#9ca3af' },
+                    majorGridLines: { color: '#f3f4f6' },
+                    line: { visible: false }
+                },
+                pannable: { lock: 'y' },
+                zoomable: { mousewheel: { lock: 'y' } }
+            });
+        });
+    }
+
+    /* ============================================================
+       CHART 2: STATUS DISTRIBUTION (DONUT)
+       ============================================================ */
+    function loadStatusChart() {
+        apiCall(API_URL + '/analytics/status-distribution', 'GET', null, function (data) {
+            var colorMap = {
+                'Pending': '#f59e0b',
+                'Confirmed': '#3b82f6',
+                'InProgress': '#06b6d4',
+                'Completed': '#16a34a',
+                'Cancelled': '#dc2626'
+            };
+            var series = data.map(function (d) {
+                return {
+                    category: d.status,
+                    value: d.count,
+                    color: colorMap[d.status] || '#9ca3af'
+                };
+            });
+
+            $('#chartStatus').kendoChart({
+                dataSource: { data: series },
+                height: 280,
+                theme: 'default',
+                chartArea: { background: 'transparent' },
+                legend: {
+                    position: 'bottom',
+                    labels: { font: '12px Inter', color: '#4a5268' }
+                },
+                seriesDefaults: {
+                    type: 'donut',
+                    startAngle: 90
+                },
+                series: [{
+                    field: 'value',
+                    categoryField: 'category',
+                    labels: {
+                        visible: true,
+                        template: '#= value #',
+                        font: '12px Inter',
+                        color: '#fff'
+                    },
+                    tooltip: {
+                        visible: true,
+                        template: '#= category #<br/><strong>#= value # booking</strong>'
+                    }
+                }]
+            });
+        });
+    }
+
+    /* ============================================================
+       CHART 3: DEALER REVENUE (BAR)
+       ============================================================ */
+    function loadDealerChart() {
+        apiCall(API_URL + '/analytics/dealer-revenue', 'GET', null, function (data) {
+            $('#chartDealer').kendoChart({
+                dataSource: { data: data },
+                height: 280,
+                theme: 'default',
+                chartArea: { background: 'transparent' },
+                seriesDefaults: {
+                    type: 'column',
+                    gap: 0.5,
+                    overlay: { gradient: 'none' }
+                },
+                series: [{
+                    field: 'revenue',
+                    name: 'Revenue',
+                    color: '#E60012',
+                    tooltip: {
+                        visible: true,
+                        template: '#= dataItem.dealerName #<br/><strong>Rp #= kendo.toString(value, "N0") #</strong>'
+                    }
+                }],
+                categoryAxis: {
+                    field: 'dealerName',
+                    labels: { font: '11px Inter', color: '#4a5268' },
+                    majorGridLines: { visible: false },
+                    line: { color: '#eef0f5' }
+                },
+                valueAxis: {
+                    labels: {
+                        font: '11px Inter',
+                        color: '#9ca3af',
+                        template: '#= kendo.toString(value / 1000000, "N0") # jt'
+                    },
+                    majorGridLines: { color: '#f3f4f6' },
+                    line: { visible: false }
+                }
+            });
+        });
+    }
+
+    /* ============================================================
+       CHART 4: TOP VEHICLES (HORIZONTAL BAR)
+       ============================================================ */
+    function loadVehiclesChart() {
+        apiCall(API_URL + '/analytics/top-vehicles?limit=5', 'GET', null, function (data) {
+            // Kalau kosong, tampilkan placeholder
+            if (!data.length) {
+                $('#chartVehicles').html(
+                    '<div class="empty-state">' +
+                    '<span class="k-icon k-i-inbox"></span>' +
+                    '<p>Belum ada data servis</p>' +
+                    '</div>'
+                );
+                return;
+            }
+
+            $('#chartVehicles').kendoChart({
+                dataSource: { data: data },
+                height: 280,
+                theme: 'default',
+                chartArea: { background: 'transparent' },
+                seriesDefaults: {
+                    type: 'bar'
+                },
+                series: [{
+                    field: 'serviceCount',
+                    name: 'Jumlah Servis',
+                    color: '#0891b2',
+                    tooltip: {
+                        visible: true,
+                        template: '#= category #<br/><strong>#= value # servis</strong>'
+                    }
+                }],
+                categoryAxis: {
+                    field: 'vehicleModelName',
+                    labels: { font: '12px Inter', color: '#4a5268' },
+                    majorGridLines: { visible: false },
+                    line: { color: '#eef0f5' }
+                },
+                valueAxis: {
+                    labels: { font: '11px Inter', color: '#9ca3af' },
+                    majorGridLines: { color: '#f3f4f6' },
+                    line: { visible: false }
+                }
+            });
+        });
+    }
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function formatRupiahShort(amount) {
+        if (!amount) return 'Rp 0';
+        if (amount >= 1000000000) return 'Rp ' + (amount / 1000000000).toFixed(1) + ' M';
+        if (amount >= 1000000) return 'Rp ' + (amount / 1000000).toFixed(1) + ' jt';
+        if (amount >= 1000) return 'Rp ' + (amount / 1000).toFixed(0) + ' rb';
+        return 'Rp ' + amount.toLocaleString('id-ID');
+    }
+
+    function buildDateRange(days) {
+        var result = [];
+        var today = new Date();
+        for (var i = days - 1; i >= 0; i--) {
+            var d = new Date(today);
+            d.setDate(d.getDate() - i);
+            var yyyy = d.getFullYear();
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var dd = String(d.getDate()).padStart(2, '0');
+            result.push(yyyy + '-' + mm + '-' + dd);
+        }
+        return result;
+    }
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    loadSummary();
+    loadTrendChart();
+    loadStatusChart();
+    loadDealerChart();
+    loadVehiclesChart();
+});
+</script>
+
+<style>
+    /* ============ KPI CARDS ============ */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .kpi-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border: 1px solid #eef0f5;
+        box-shadow: 0 1px 3px rgba(20,30,60,0.04);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(20,30,60,0.08);
+    }
+
+    .kpi-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+    .kpi-icon-red { background: rgba(230, 0, 18, 0.1); color: #E60012; }
+    .kpi-icon-green { background: #d1fae5; color: #065f46; }
+    .kpi-icon-orange { background: #fef3c7; color: #92400e; }
+    .kpi-icon-blue { background: #dbeafe; color: #1e40af; }
+
+    .kpi-content { min-width: 0; flex: 1; }
+
+    .kpi-label {
+        font-size: 11.5px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 700;
+    }
+    .kpi-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: #1a1d29;
+        line-height: 1.1;
+        margin: 6px 0 4px;
+        letter-spacing: -0.5px;
+    }
+    .kpi-sub {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+    }
+
+    /* ============ CHART CARDS ============ */
+    .chart-row-2 {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .chart-row-2:nth-child(3) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .chart-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid #eef0f5;
+        box-shadow: 0 1px 3px rgba(20,30,60,0.04);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+    .chart-header h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1d29;
+        letter-spacing: -0.1px;
+    }
+    .chart-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+    }
+
+    .chart-body { height: 280px; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1200px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        .chart-row-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+        .kpi-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</body>
+</html>
