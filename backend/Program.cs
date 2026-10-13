@@ -91,40 +91,36 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 var app = builder.Build();
 
-// ==== HANGFIRE DASHBOARD + RECURRING JOBS ====
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
-{
-    // Untuk portfolio, biarkan tanpa auth (nanti bisa ditambah)
-    // Authorization = new[] { new HangfireAuthorizationFilter() }
-});
-
-// Setup recurring jobs
+// ====================================================================
+// 1. AUTO-MIGRATE (PALING PERTAMA — buat database + tabel sebelum apapun)
+// ====================================================================
 using (var scope = app.Services.CreateScope())
 {
-    var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-
-    // Generate reminders tiap hari jam 8 pagi
-    recurringJobManager.AddOrUpdate<ReminderService>(
-        "generate-reminders",
-        service => service.GenerateRemindersAsync(),
-        Cron.Daily(8, 0)); // 08:00
-
-    // Kirim pending reminders tiap hari jam 9 pagi
-    recurringJobManager.AddOrUpdate<ReminderService>(
-        "send-reminders",
-        service => service.SendPendingRemindersAsync(),
-        Cron.Daily(9, 0)); // 09:00
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        Console.WriteLine("⏳ Running database migration...");
+        db.Database.Migrate();
+        Console.WriteLine("✅ Database migrated successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Migration failed: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+        throw;
+    }
 }
 
-// ==== SEEDER: Pastikan ada SuperAdmin ====
+// ====================================================================
+// 2. SEEDER: Pastikan ada SuperAdmin
+// ====================================================================
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var adminEmail = "admin@mitsubishi.com";
-    
+
     var admin = db.Users.FirstOrDefault(u => u.Email == adminEmail);
     if (admin == null)
     {
@@ -146,8 +142,37 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
         Console.WriteLine("✅ SuperAdmin updated");
     }
+    else
+    {
+        Console.WriteLine("ℹ️ SuperAdmin already exists");
+    }
 }
 
+// ====================================================================
+// 3. HANGFIRE DASHBOARD + RECURRING JOBS
+// ====================================================================
+app.UseHangfireDashboard("/hangfire");
+
+using (var scope = app.Services.CreateScope())
+{
+    var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+
+    recurringJobManager.AddOrUpdate<ReminderService>(
+        "generate-reminders",
+        service => service.GenerateRemindersAsync(),
+        Cron.Daily(8, 0));
+
+    recurringJobManager.AddOrUpdate<ReminderService>(
+        "send-reminders",
+        service => service.SendPendingRemindersAsync(),
+        Cron.Daily(9, 0));
+
+    Console.WriteLine("✅ Hangfire recurring jobs registered");
+}
+
+// ====================================================================
+// 4. SCALAR (Development only)
+// ====================================================================
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -161,22 +186,10 @@ if (app.Environment.IsDevelopment())
             });
     });
 }
-// ===== AUTO-MIGRATE DATABASE =====
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
-    {
-        db.Database.Migrate();
-        Console.WriteLine("✅ Database migrated successfully");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Migration failed: {ex.Message}");
-        throw;
-    }
-}
 
+// ====================================================================
+// 5. MIDDLEWARE PIPELINE
+// ====================================================================
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
