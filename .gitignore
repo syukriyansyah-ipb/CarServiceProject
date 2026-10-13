@@ -1,0 +1,29 @@
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# ===== IDE =====
+.idea/
+.vscode/
+
+# ===== Local config =====
+appsettings.Development.json
+appsettings.Local.json
+
+# ===== Secrets =====
+*.pfx
+*.p12
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Node =====
+node_modules/

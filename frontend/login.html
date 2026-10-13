@@ -55,7 +55,9 @@
 
     <script>
         $(function () {
-            var API = 'http://localhost:5017/api';
+            var API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:5017/api'
+            : '/api';
 
             /* Quick-fill dari demo account */
             $('.demo-btn').on('click', function () {

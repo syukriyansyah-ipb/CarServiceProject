@@ -2,7 +2,9 @@
    LAYOUT - Sidebar + Topbar (Role-based, Multi-Tenant)
    ============================================================ */
 
-var API_URL = 'http://localhost:5017/api';
+var API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5017/api'
+    : '/api';
 var TOKEN   = localStorage.getItem('token');
 var ROLE    = localStorage.getItem('role') || '';
 var DEALER_ID   = localStorage.getItem('dealerId');

@@ -1,0 +1,119 @@
+services:
+  # ============================================================
+  # SQL SERVER 2022
+  # ============================================================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mts-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - mts-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Passw0rd' -C -Q 'SELECT 1' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+
+  # ============================================================
+  # REDIS 7
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: mts-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mts-net
+    restart: unless-stopped
+
+  # ============================================================
+  # ELASTICSEARCH 8.15
+  # ============================================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: mts-elastic
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      - mts-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+
+  # ============================================================
+  # API .NET
+  # ============================================================
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mts-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MitsubishiServiceDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+      - ConnectionStrings__Redis=redis:6379
+      - Elasticsearch__Uri=http://elasticsearch:9200
+      - Elasticsearch__DefaultIndex=vehicles
+      - Jwt__Key=ta3r03j8ME8vOya34iYzoylwheM4lZ7hZ6c5p53qWrk=
+      - Jwt__Issuer=MitsubishiApi
+      - Jwt__Audience=MitsubishiApiUsers
+      - Jwt__ExpireMinutes=60
+    ports:
+      - "5017:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - mts-net
+    restart: unless-stopped
+
+  # ============================================================
+  # FRONTEND (Nginx)
+  # ============================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mts-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - mts-net
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+  redis_data:
+  elastic_data:
+
+networks:
+  mts-net:
+    driver: bridge
