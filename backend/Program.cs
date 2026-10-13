@@ -114,38 +114,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ====================================================================
-// 2. SEEDER: Pastikan ada SuperAdmin
+// 2. SEEDER (semua data master + user demo)
 // ====================================================================
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var adminEmail = "admin@mitsubishi.com";
-
-    var admin = db.Users.FirstOrDefault(u => u.Email == adminEmail);
-    if (admin == null)
-    {
-        db.Users.Add(new User
-        {
-            Email = adminEmail,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-            FullName = "Super Admin",
-            Role = "SuperAdmin",
-            DealerId = null
-        });
-        db.SaveChanges();
-        Console.WriteLine("✅ SuperAdmin seeded");
-    }
-    else if (admin.Role != "SuperAdmin")
-    {
-        admin.Role = "SuperAdmin";
-        admin.DealerId = null;
-        db.SaveChanges();
-        Console.WriteLine("✅ SuperAdmin updated");
-    }
-    else
-    {
-        Console.WriteLine("ℹ️ SuperAdmin already exists");
-    }
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    await DbSeeder.SeedAsync(db, logger);
 }
 
 // ====================================================================
