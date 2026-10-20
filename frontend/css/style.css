@@ -555,35 +555,46 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(230, 0, 18, 0.15), transparent 45%),
-        radial-gradient(circle at 80% 80%, rgba(230, 0, 18, 0.08), transparent 45%),
-        linear-gradient(135deg, #0d0f16 0%, #1a1d29 100%);
+    
+    /* Memanggil gambar dari folder img */
+    background: url('../img/bg.png') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    
     position: relative;
     overflow: hidden;
 }
+
+/* Lapisan gelap transparan (Overlay) */
 .login-page::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.7); /* Warna biru gelap transparan 70% */
+    z-index: 0;
 }
 
+/* Agar kotak form login berada di atas gambar dan overlay */
 .login-box {
     position: relative;
-    background: #fff;
+    z-index: 1; /* Agar berada di atas gambar background */
+    
+    /* WARNA PUTIH TRANSPARAN (0.85 = 85% putih, 15% tembus pandang) */
+    background: rgba(255, 255, 255, 0.85); 
+    
+    /* EFEK KACA BLUR (Sangat modern dan bikin teks terbaca) */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Untuk dukungan Safari */
+    
     border-radius: 18px;
     padding: 44px 40px 36px;
     width: 100%;
     max-width: 400px;
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
-    z-index: 1;
+    
+    /* Sedikit border putih transparan agar makin rapi */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
 }
 
 .login-brand {
