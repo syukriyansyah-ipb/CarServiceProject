@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy csproj dulu (layer caching)
-COPY ["MitsubishiApi.csproj", "./"]
+COPY ["AutoCareApi.csproj", "./"]
 RUN dotnet restore
 
 # Copy semua source
@@ -26,4 +26,4 @@ EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-ENTRYPOINT ["dotnet", "MitsubishiApi.dll"]
+ENTRYPOINT ["dotnet", "AutoCareApi.dll"]

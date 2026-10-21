@@ -1,6 +1,6 @@
-# 🚗 Mitsubishi Service Booking System
+# 🚗 AutoCare Service Booking System
 
-Sistem manajemen booking servis kendaraan Mitsubishi yang lengkap dengan autentikasi JWT, multi-tenant dealer isolation, analytics dashboard, dan background job untuk reminder servis.
+Sistem manajemen booking servis kendaraan AutoCare yang lengkap dengan autentikasi JWT, multi-tenant dealer isolation, analytics dashboard, dan background job untuk reminder servis.
 
 ![Dashboard Analytics](docs/screenshots/analytics.png)
 
@@ -12,7 +12,7 @@ Sistem manajemen booking servis kendaraan Mitsubishi yang lengkap dengan autenti
 - 📊 **Analytics Dashboard** — KPI + 4 chart interaktif (booking trend, revenue per dealer, distribusi status, top kendaraan)
 - 🔍 **Fuzzy Search** — Elasticsearch untuk cari by plat, model, atau nama customer
 - ⚡ **Redis Cache** — master data cache untuk performa
-- 🧾 **Invoice PDF** — auto-generate dengan brand Mitsubishi + PPN 11%
+- 🧾 **Invoice PDF** — auto-generate dengan brand AutoCare + PPN 11%
 - 📱 **Role-based UI** — menu dan data terfilter sesuai role & dealer
 
 ## 🛠 Tech Stack
@@ -62,13 +62,13 @@ Sistem manajemen booking servis kendaraan Mitsubishi yang lengkap dengan autenti
 
 ### 1. Clone & Setup
 ```bash
-git clone https://github.com/USERNAME/mitsubishi-service-booking.git
-cd mitsubishi-service-booking
+git clone https://github.com/USERNAME/AutoCare-service-booking.git
+cd AutoCare-service-booking
 docker compose up -d    # SQL Server, Redis, Elasticsearch
 
 ### 2. Run API
 ```bash
-cd MitsubishiApi
+cd AutoCareApi
 dotnet ef database update
 dotnet run
 
@@ -78,9 +78,9 @@ cd frontend
 
 ### Login Demo
 Role	Email	Password	Dealer
-SuperAdmin	admin@mitsubishi.com	Admin123!	Head Office
-Service Advisor	sa.jkt@mitsubishi.co.id	Password123!	Jakarta Selatan
-Service Advisor	sa.bdg@mitsubishi.co.id	Password123!	Bandung
+SuperAdmin	admin@AutoCare.com	Admin123!	Head Office
+Service Advisor	sa.jkt@AutoCare.co.id	Password123!	Jakarta Selatan
+Service Advisor	sa.bdg@AutoCare.co.id	Password123!	Bandung
 
 🔐 Keamanan
 Password hash BCrypt
@@ -95,7 +95,7 @@ Multi-tenant — Login sebagai SA Jakarta vs SA Bandung, data terisolasi
 Anti double-booking — Coba booking slot yang sama → HTTP 409 Conflict
 Auto-generate Invoice — Complete booking → ServiceHistory + Invoice otomatis
 Background Job — Hangfire dashboard menunjukkan recurring jobs
-PDF Invoice — Download invoice dengan brand Mitsubishi
+PDF Invoice — Download invoice dengan brand AutoCare
 Analytics — Chart interaktif dengan data real-time
 
 📄 Lisensi

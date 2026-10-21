@@ -106,6 +106,6 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@mitsubishi.com",
+  "email": "admin@AutoCare.com",
   "password": "Admin123!"
 }

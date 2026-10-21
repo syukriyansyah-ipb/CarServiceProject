@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MitsubishiApi.Data;
+using AutoCareApi.Data;
 
 #nullable disable
 
-namespace MitsubishiApi.Migrations
+namespace AutoCareApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20261010005819_InitialCreate")]
@@ -24,7 +24,7 @@ namespace MitsubishiApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MitsubishiApi.Models.Vehicle", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

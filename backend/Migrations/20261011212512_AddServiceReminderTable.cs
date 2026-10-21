@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MitsubishiApi.Migrations
+namespace AutoCareApi.Migrations
 {
     /// <inheritdoc />
     public partial class AddServiceReminderTable : Migration

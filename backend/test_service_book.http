@@ -3,7 +3,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@mitsubishi.com",
+  "email": "admin@AutoCare.com",
   "password": "Admin123!"
 }
 
@@ -80,24 +80,24 @@ GET http://localhost:5017/api/dealers
 {
     "id": 1,
     "code": "MTR-JKT-01",
-    "name": "Mitsubishi Jakarta Selatan",
+    "name": "AutoCare Jakarta Selatan",
     "address": "Jl. TB Simatupang No. 10",
     "city": "Jakarta",
     "province": "DKI Jakarta",
     "phone": "021-12345678",
-    "email": "jkt-selatan@mitsubishi.co.id",
+    "email": "jkt-selatan@AutoCare.co.id",
     "maxSlotPerDay": 25,
     "isActive": true
   },
   {
     "id": 2,
     "code": "MTR-BDG-01",
-    "name": "Mitsubishi Bandung",
+    "name": "AutoCare Bandung",
     "address": "Jl. Asia Afrika No. 100",
     "city": "Bandung",
     "province": "Jawa Barat",
     "phone": "022-87654321",
-    "email": "bandung@mitsubishi.co.id",
+    "email": "bandung@AutoCare.co.id",
     "maxSlotPerDay": 15,
     "isActive": true
   }
@@ -161,9 +161,9 @@ Transfer-Encoding: chunked
     "employeeCode": "MEC-JKT-001",
     "fullName": "Ahmad Sutrisno",
     "dealerId": 1,
-    "dealerName": "Mitsubishi Jakarta Selatan",
+    "dealerName": "AutoCare Jakarta Selatan",
     "specialization": "Engine",
-    "certification": "Mitsubishi Certified Level 2",
+    "certification": "AutoCare Certified Level 2",
     "phone": "081111111111",
     "isAvailable": true,
     "isActive": true
@@ -173,9 +173,9 @@ Transfer-Encoding: chunked
     "employeeCode": "MEC-JKT-002",
     "fullName": "Bambang Hartono",
     "dealerId": 1,
-    "dealerName": "Mitsubishi Jakarta Selatan",
+    "dealerName": "AutoCare Jakarta Selatan",
     "specialization": "Electrical",
-    "certification": "Mitsubishi Certified Level 1",
+    "certification": "AutoCare Certified Level 1",
     "phone": "081222222222",
     "isAvailable": true,
     "isActive": true
@@ -185,9 +185,9 @@ Transfer-Encoding: chunked
     "employeeCode": "MEC-BDG-001",
     "fullName": "Cecep Supriadi",
     "dealerId": 2,
-    "dealerName": "Mitsubishi Bandung",
+    "dealerName": "AutoCare Bandung",
     "specialization": "Body & Paint",
-    "certification": "Mitsubishi Certified Level 3",
+    "certification": "AutoCare Certified Level 3",
     "phone": "081333333333",
     "isAvailable": true,
     "isActive": true

@@ -1,9 +1,9 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using MitsubishiApi.Models;
+using AutoCareApi.Models;
 
-namespace MitsubishiApi.Services;
+namespace AutoCareApi.Services;
 
 public class InvoicePdfService
 {
@@ -229,8 +229,8 @@ public class InvoicePdfService
         {
             row.RelativeItem().Column(col =>
             {
-                // Logo diamond Mitsubishi (3 segitiga)
-                col.Item().Text("MITSUBISHI").FontSize(22).Bold().FontColor("#E60012").LetterSpacing(0.1f);
+                // Logo diamond AutoCare (3 segitiga)
+                col.Item().Text("AutoCare").FontSize(22).Bold().FontColor("#E60012").LetterSpacing(0.1f);
                 col.Item().Text("Service Booking System").FontSize(9).FontColor(Colors.Grey.Medium);
             });
 
@@ -246,7 +246,7 @@ public class InvoicePdfService
     {
         container.BorderTop(1).BorderColor(Colors.Grey.Lighten2).PaddingTop(10).Column(col =>
         {
-            col.Item().AlignCenter().Text("Terima kasih atas kepercayaan Anda kepada Mitsubishi.")
+            col.Item().AlignCenter().Text("Terima kasih atas kepercayaan Anda kepada AutoCare.")
                 .FontSize(9).Italic().FontColor(Colors.Grey.Darken1);
 
             col.Item().PaddingTop(6).AlignCenter().Row(row =>

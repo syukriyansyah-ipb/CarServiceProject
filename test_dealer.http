@@ -3,7 +3,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@mitsubishi.com",
+  "email": "admin@AutoCare.com",
   "password": "Admin123!"
 }
 
@@ -17,12 +17,12 @@ Content-Type: application/json
 
 {
   "code": "MTR-JKT-01",
-  "name": "Mitsubishi Jakarta Selatan",
+  "name": "AutoCare Jakarta Selatan",
   "address": "Jl. TB Simatupang No. 10",
   "city": "Jakarta",
   "province": "DKI Jakarta",
   "phone": "021-12345678",
-  "email": "jkt-selatan@mitsubishi.co.id",
+  "email": "jkt-selatan@AutoCare.co.id",
   "maxSlotPerDay": 25
 }
 
@@ -33,12 +33,12 @@ Content-Type: application/json
 
 {
   "code": "MTR-BDG-01",
-  "name": "Mitsubishi Bandung",
+  "name": "AutoCare Bandung",
   "address": "Jl. Asia Afrika No. 100",
   "city": "Bandung",
   "province": "Jawa Barat",
   "phone": "022-87654321",
-  "email": "bandung@mitsubishi.co.id",
+  "email": "bandung@AutoCare.co.id",
   "maxSlotPerDay": 15
 }
 

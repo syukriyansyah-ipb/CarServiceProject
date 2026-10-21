@@ -1,6 +1,6 @@
-@MitsubishiApi_HostAddress = http://localhost:5017
+@AutoCareApi_HostAddress = http://localhost:5017
 
-GET {{MitsubishiApi_HostAddress}}/weatherforecast/
+GET {{AutoCareApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

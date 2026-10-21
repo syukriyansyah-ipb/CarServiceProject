@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MitsubishiApi.Data;
-using MitsubishiApi.Services;
-using MitsubishiApi.Models;
+using AutoCareApi.Data;
+using AutoCareApi.Services;
+using AutoCareApi.Models;
 using Scalar.AspNetCore;
 using System.Text;
 using Hangfire;
@@ -44,7 +44,7 @@ builder.Services.AddScoped<ReminderService>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "MitsubishiApi:";
+    options.InstanceName = "AutoCareApi:";
 });
 
 // Elasticsearch

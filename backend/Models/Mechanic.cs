@@ -1,4 +1,4 @@
-namespace MitsubishiApi.Models;
+namespace AutoCareApi.Models;
 
 public class Mechanic
 {
@@ -8,7 +8,7 @@ public class Mechanic
     public int DealerId { get; set; }                            // FK ke Dealer
     public Dealer? Dealer { get; set; }                          // Navigation property
     public string? Specialization { get; set; }                  // "Engine", "Electrical", "Body"
-    public string? Certification { get; set; }                   // sertifikat Mitsubishi
+    public string? Certification { get; set; }                   // sertifikat AutoCare
     public string? Phone { get; set; }
     public bool IsAvailable { get; set; } = true;
     public bool IsActive { get; set; } = true;

@@ -117,7 +117,7 @@ function buildSidebar(activeKey) {
                     '<span class="mark-diamond d3"></span>' +
                 '</div>' +
                 '<div class="brand-text">' +
-                    '<div class="brand-name">MITSUBISHI</div>' +
+                    '<div class="brand-name">AutoCare</div>' +
                     '<div class="brand-sub">Service Booking</div>' +
                 '</div>' +
             '</div>' +
@@ -165,7 +165,7 @@ function renderLayout(activeKey, title, subtitle) {
             '</main>' +
         '</div>';
     $('#page-root').replaceWith(layoutHtml);
-    if (title) document.title = title + ' — Mitsubishi Service';
+    if (title) document.title = title + ' — AutoCare Service';
 }
 
 function setTopbarActions(html) {

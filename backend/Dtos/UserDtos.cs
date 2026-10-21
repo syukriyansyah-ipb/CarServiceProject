@@ -1,4 +1,4 @@
-namespace MitsubishiApi.Dtos;
+namespace AutoCareApi.Dtos;
 
 public class UserDto
 {

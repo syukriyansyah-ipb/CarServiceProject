@@ -1,4 +1,4 @@
-namespace MitsubishiApi.Models;
+namespace AutoCareApi.Models;
 
 public class ServiceReminder
 {

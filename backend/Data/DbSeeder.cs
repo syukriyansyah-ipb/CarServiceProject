@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using MitsubishiApi.Models;
+using AutoCareApi.Models;
 
-namespace MitsubishiApi.Data;
+namespace AutoCareApi.Data;
 
 public static class DbSeeder
 {
@@ -57,7 +57,7 @@ public static class DbSeeder
     // ============================================================
     private static async Task SeedSuperAdminAsync(AppDbContext db, ILogger logger)
     {
-        var adminEmail = "admin@mitsubishi.com";
+        var adminEmail = "admin@AutoCare.com";
         var existing = await db.Users.FirstOrDefaultAsync(u => u.Email == adminEmail);
 
         if (existing == null)
@@ -94,24 +94,24 @@ public static class DbSeeder
             new()
             {
                 Code = "MTR-JKT-01",
-                Name = "Mitsubishi Jakarta Selatan",
+                Name = "AutoCare Jakarta Selatan",
                 Address = "Jl. TB Simatupang No. 10",
                 City = "Jakarta",
                 Province = "DKI Jakarta",
                 Phone = "021-12345678",
-                Email = "jkt-selatan@mitsubishi.co.id",
+                Email = "jkt-selatan@AutoCare.co.id",
                 MaxSlotPerDay = 25,
                 IsActive = true
             },
             new()
             {
                 Code = "MTR-BDG-01",
-                Name = "Mitsubishi Bandung",
+                Name = "AutoCare Bandung",
                 Address = "Jl. Asia Afrika No. 100",
                 City = "Bandung",
                 Province = "Jawa Barat",
                 Phone = "022-87654321",
-                Email = "bandung@mitsubishi.co.id",
+                Email = "bandung@AutoCare.co.id",
                 MaxSlotPerDay = 15,
                 IsActive = true
             }
@@ -233,9 +233,9 @@ public static class DbSeeder
 
         var mechanics = new List<Mechanic>
         {
-            new() { EmployeeCode = "MEC-JKT-001", FullName = "Ahmad Sutrisno",   DealerId = jkt.Id, Specialization = "Engine",     Certification = "Mitsubishi Certified Level 2", Phone = "081111111111", IsAvailable = true, IsActive = true },
-            new() { EmployeeCode = "MEC-JKT-002", FullName = "Bambang Hartono",  DealerId = jkt.Id, Specialization = "Electrical", Certification = "Mitsubishi Certified Level 1", Phone = "081222222222", IsAvailable = true, IsActive = true },
-            new() { EmployeeCode = "MEC-BDG-001", FullName = "Cecep Supriadi",   DealerId = bdg.Id, Specialization = "Body & Paint",Certification = "Mitsubishi Certified Level 3", Phone = "081333333333", IsAvailable = true, IsActive = true }
+            new() { EmployeeCode = "MEC-JKT-001", FullName = "Ahmad Sutrisno",   DealerId = jkt.Id, Specialization = "Engine",     Certification = "AutoCare Certified Level 2", Phone = "081111111111", IsAvailable = true, IsActive = true },
+            new() { EmployeeCode = "MEC-JKT-002", FullName = "Bambang Hartono",  DealerId = jkt.Id, Specialization = "Electrical", Certification = "AutoCare Certified Level 1", Phone = "081222222222", IsAvailable = true, IsActive = true },
+            new() { EmployeeCode = "MEC-BDG-001", FullName = "Cecep Supriadi",   DealerId = bdg.Id, Specialization = "Body & Paint",Certification = "AutoCare Certified Level 3", Phone = "081333333333", IsAvailable = true, IsActive = true }
         };
 
         db.Mechanics.AddRange(mechanics);
@@ -259,8 +259,8 @@ public static class DbSeeder
 
         var staff = new List<User>
         {
-            new() { Email = "sa.jkt@mitsubishi.co.id", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123!"), FullName = "Adi Nugroho",     Role = "ServiceAdvisor", DealerId = jkt.Id },
-            new() { Email = "sa.bdg@mitsubishi.co.id", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123!"), FullName = "Bambang Setiawan", Role = "ServiceAdvisor", DealerId = bdg.Id }
+            new() { Email = "sa.jkt@AutoCare.co.id", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123!"), FullName = "Adi Nugroho",     Role = "ServiceAdvisor", DealerId = jkt.Id },
+            new() { Email = "sa.bdg@AutoCare.co.id", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123!"), FullName = "Bambang Setiawan", Role = "ServiceAdvisor", DealerId = bdg.Id }
         };
 
         var newCount = 0;

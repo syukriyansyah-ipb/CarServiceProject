@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MitsubishiApi.Migrations
+namespace AutoCareApi.Migrations
 {
     /// <inheritdoc />
     public partial class AddCustomerTable : Migration

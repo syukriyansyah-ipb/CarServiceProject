@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MitsubishiApi.Data;
+using AutoCareApi.Data;
 
 #nullable disable
 
-namespace MitsubishiApi.Migrations
+namespace AutoCareApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20261010210648_AddMechanicTable")]
@@ -25,7 +25,7 @@ namespace MitsubishiApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MitsubishiApi.Models.Customer", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +62,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Dealer", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Dealer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -107,7 +107,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("Dealers");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Mechanic", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Mechanic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +151,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("Mechanics");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.ServiceType", b =>
+            modelBuilder.Entity("AutoCareApi.Models.ServiceType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -192,7 +192,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("ServiceTypes");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.User", b =>
+            modelBuilder.Entity("AutoCareApi.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,7 +224,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Vehicle", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -266,7 +266,7 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.VehicleModel", b =>
+            modelBuilder.Entity("AutoCareApi.Models.VehicleModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -302,9 +302,9 @@ namespace MitsubishiApi.Migrations
                     b.ToTable("VehicleModels");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Mechanic", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Mechanic", b =>
                 {
-                    b.HasOne("MitsubishiApi.Models.Dealer", "Dealer")
+                    b.HasOne("AutoCareApi.Models.Dealer", "Dealer")
                         .WithMany()
                         .HasForeignKey("DealerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -313,15 +313,15 @@ namespace MitsubishiApi.Migrations
                     b.Navigation("Dealer");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Vehicle", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Vehicle", b =>
                 {
-                    b.HasOne("MitsubishiApi.Models.Customer", "Customer")
+                    b.HasOne("AutoCareApi.Models.Customer", "Customer")
                         .WithMany("Vehicles")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MitsubishiApi.Models.VehicleModel", "VehicleModel")
+                    b.HasOne("AutoCareApi.Models.VehicleModel", "VehicleModel")
                         .WithMany("Vehicles")
                         .HasForeignKey("VehicleModelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -332,12 +332,12 @@ namespace MitsubishiApi.Migrations
                     b.Navigation("VehicleModel");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.Customer", b =>
+            modelBuilder.Entity("AutoCareApi.Models.Customer", b =>
                 {
                     b.Navigation("Vehicles");
                 });
 
-            modelBuilder.Entity("MitsubishiApi.Models.VehicleModel", b =>
+            modelBuilder.Entity("AutoCareApi.Models.VehicleModel", b =>
                 {
                     b.Navigation("Vehicles");
                 });

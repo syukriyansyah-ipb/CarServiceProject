@@ -4070,11 +4070,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\CarServiceProject\\backend\\MitsubishiApi.csproj",
-      "projectName": "MitsubishiApi",
-      "projectPath": "C:\\CarServiceProject\\backend\\MitsubishiApi.csproj",
+      "projectUniqueName": "c:\\CarServiceProject\\backend\\AutoCareApi.csproj",
+      "projectName": "AutoCareApi",
+      "projectPath": "c:\\CarServiceProject\\backend\\AutoCareApi.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\CarServiceProject\\backend\\obj\\",
+      "outputPath": "c:\\CarServiceProject\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"

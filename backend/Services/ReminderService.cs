@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using MitsubishiApi.Data;
-using MitsubishiApi.Models;
+using AutoCareApi.Data;
+using AutoCareApi.Models;
 
-namespace MitsubishiApi.Services;
+namespace AutoCareApi.Services;
 
 public class ReminderService
 {

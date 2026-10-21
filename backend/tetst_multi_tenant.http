@@ -3,7 +3,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@mitsubishi.com",
+  "email": "admin@AutoCare.com",
   "password": "Admin123!"
 }
 
@@ -13,7 +13,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1ha
 Content-Type: application/json
 
 {
-  "email": "sa.jkt@mitsubishi.co.id",
+  "email": "sa.jkt@AutoCare.co.id",
   "password": "Password123!",
   "fullName": "Adi Nugroho",
   "role": "ServiceAdvisor",
@@ -26,7 +26,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1ha
 Content-Type: application/json
 
 {
-  "email": "sa.bdg@mitsubishi.co.id",
+  "email": "sa.bdg@AutoCare.co.id",
   "password": "Password123!",
   "fullName": "Bambang Setiawan",
   "role": "ServiceAdvisor",
@@ -43,7 +43,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "sa.jkt@mitsubishi.co.id",
+  "email": "sa.jkt@AutoCare.co.id",
   "password": "Password123!"
 }
 
@@ -52,7 +52,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "sa.bdg@mitsubishi.co.id",
+  "email": "sa.bdg@AutoCare.co.id",
   "password": "Password123!"
 }
 

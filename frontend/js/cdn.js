@@ -1,5 +1,5 @@
 /* ============================================================
-   CDN LOADER - Mitsubishi Service Booking System
+   CDN LOADER - AutoCare Service Booking System
    Semua external resource di-load dari sini.
    Update versi Kendo/jQuery cukup di file ini saja.
    ============================================================ */

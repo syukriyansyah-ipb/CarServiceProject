@@ -1,5 +1,5 @@
 /* ============================================================
-   MITSUBISHI SERVICE — Global Stylesheet
+   AutoCare SERVICE — Global Stylesheet
    ============================================================ */
 
 :root {
@@ -95,7 +95,7 @@ a { color: inherit; text-decoration: none; }
     justify-content: center;
 }
 
-/* 3 diamond mark (abstract, Mitsubishi-inspired) */
+/* 3 diamond mark (abstract, AutoCare-inspired) */
 .mark-diamond {
     position: absolute;
     width: 13px;

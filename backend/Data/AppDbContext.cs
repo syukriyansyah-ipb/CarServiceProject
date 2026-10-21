@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using MitsubishiApi.Models;
+using AutoCareApi.Models;
 
-namespace MitsubishiApi.Data;
+namespace AutoCareApi.Data;
 
 public class AppDbContext : DbContext
 {

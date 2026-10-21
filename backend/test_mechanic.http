@@ -3,7 +3,7 @@ POST http://localhost:5017/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@mitsubishi.com",
+  "email": "admin@AutoCare.com",
   "password": "Admin123!"
 }
 
@@ -17,7 +17,7 @@ Content-Type: application/json
   "fullName": "Ahmad Sutrisno",
   "dealerId": 1,
   "specialization": "Engine",
-  "certification": "Mitsubishi Certified Level 2",
+  "certification": "AutoCare Certified Level 2",
   "phone": "081111111111",
   "isAvailable": true
 }
@@ -32,7 +32,7 @@ Content-Type: application/json
   "fullName": "Bambang Hartono",
   "dealerId": 1,
   "specialization": "Electrical",
-  "certification": "Mitsubishi Certified Level 1",
+  "certification": "AutoCare Certified Level 1",
   "phone": "081222222222",
   "isAvailable": true
 }
@@ -47,7 +47,7 @@ Content-Type: application/json
   "fullName": "Cecep Supriadi",
   "dealerId": 2,
   "specialization": "Body & Paint",
-  "certification": "Mitsubishi Certified Level 3",
+  "certification": "AutoCare Certified Level 3",
   "phone": "081333333333",
   "isAvailable": true
 }

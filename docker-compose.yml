@@ -72,13 +72,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MitsubishiServiceDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=AutoCareServiceDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
       - ConnectionStrings__Redis=redis:6379
       - Elasticsearch__Uri=http://elasticsearch:9200
       - Elasticsearch__DefaultIndex=vehicles
       - Jwt__Key=ta3r03j8ME8vOya34iYzoylwheM4lZ7hZ6c5p53qWrk=
-      - Jwt__Issuer=MitsubishiApi
-      - Jwt__Audience=MitsubishiApiUsers
+      - Jwt__Issuer=AutoCareApi
+      - Jwt__Audience=AutoCareApiUsers
       - Jwt__ExpireMinutes=60
     ports:
       - "5017:8080"
